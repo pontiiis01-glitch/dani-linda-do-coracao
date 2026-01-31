@@ -8,9 +8,9 @@
     <meta name="apple-mobile-web-app-title" content="Finanças Dani">
     <title>Finanças da Dani 💖</title>
 
-    <link rel="apple-touch-icon" href="icone.png">
-    <link rel="icon" type="image/png" href="icone.png">
-    <link rel="shortcut icon" href="icone.png">
+    <link rel="apple-touch-icon" href="icone.png?v=2">
+    <link rel="icon" type="image/png" href="icone.png?v=2">
+    <link rel="shortcut icon" href="icone.png?v=2">
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -351,12 +351,22 @@
         });
     }
 
+    // AQUI ESTÁ A CORREÇÃO: Função updateScreen "vacinada"
     function updateScreen(data) {
         if (!data) data = getDefaultData();
         
-        // Garante que o cartão automático exista
+        // 1. Garante que o Cartão Inter esteja lá
         if (data.main && !data.main.some(i => i.id === 'inter_auto')) {
              data.main.unshift({ icon: '💳', name: 'Meu Inter', value: 0, isMine: true, locked: true, id: 'inter_auto' });
+        }
+
+        // 2. CORREÇÃO: Garante que "Fatura Igor" e "Fatura Lucas" apareçam, mesmo em meses velhos
+        if (data.main) {
+            const hasIgor = data.main.some(i => i.name === 'Fatura Igor');
+            if (!hasIgor) data.main.push({ icon: '👱', name: 'Fatura Igor', value: 0, isMine: true });
+
+            const hasLucas = data.main.some(i => i.name === 'Fatura Lucas');
+            if (!hasLucas) data.main.push({ icon: '🧔', name: 'Fatura Lucas', value: 0, isMine: true });
         }
 
         document.getElementById('salary').value = data.salary || 0;
@@ -373,10 +383,10 @@
             salary: 2271.27, 
             emergency: 0, interTotal: 0,
             main: [
-                // GASTOS FIXOS + DÍVIDAS IGOR/LUCAS
+                // ESTES SÃO OS DADOS PADRÃO PARA MESES NOVOS
                 { icon: '💳', name: 'Meu Inter', value: 0, isMine: true, locked: true, id: 'inter_auto' },
-                { icon: '👱', name: 'Fatura Igor', value: 0, isMine: true },  // <--- AQUI (Ela edita o valor total)
-                { icon: '🧔', name: 'Fatura Lucas', value: 0, isMine: true }, // <--- AQUI (Ela edita o valor total)
+                { icon: '👱', name: 'Fatura Igor', value: 0, isMine: true },
+                { icon: '🧔', name: 'Fatura Lucas', value: 0, isMine: true },
                 { icon: '📶', name: 'Claro Flex', value: 40.00, isMine: true },
                 { icon: '🏰', name: 'Disney', value: 11.71, isMine: true },
                 { icon: '🏋️', name: 'Academia', value: 95.00, isMine: true },
