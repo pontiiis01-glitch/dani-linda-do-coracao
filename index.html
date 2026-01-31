@@ -8,10 +8,10 @@
     <meta name="apple-mobile-web-app-title" content="Finanças Dani">
     <title>Finanças da Dani 💖</title>
 
-    <link rel="icon" type="image/png" sizes="32x32" href="icone.png?v=4">
-    <link rel="icon" type="image/png" sizes="16x16" href="icone.png?v=4">
-    <link rel="shortcut icon" href="icone.png?v=4">
-    <link rel="apple-touch-icon" href="icone.png?v=4">
+    <link rel="icon" type="image/png" sizes="32x32" href="icone.png?v=5">
+    <link rel="icon" type="image/png" sizes="16x16" href="icone.png?v=5">
+    <link rel="shortcut icon" href="icone.png?v=5">
+    <link rel="apple-touch-icon" href="icone.png?v=5">
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -201,7 +201,9 @@
                         <tr>
                             <th style="width:40px">Ícone</th>
                             <th>Item</th>
-                            <th>Desc.</th> <th style="width:60px; text-align:center">Parc.</th> <th style="width:100px">Valor</th>
+                            <th>Desc.</th>
+                            <th style="width:60px; text-align:center">Parc.</th>
+                            <th style="width:100px">Valor</th>
                             <th style="width:40px; text-align:center">Meu?</th>
                             <th style="width:30px"></th>
                         </tr>
@@ -235,14 +237,13 @@
     
     <button class="btn-reset" onclick="resetMonthDefault()">⚠️ RESETAR PADRÃO DO MÊS (Correção)</button>
 
-    <footer>Versão Final Dani 💖</footer>
+    <footer>Versão 5.0 - Dani 💖</footer>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
     import { getFirestore, doc, onSnapshot, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
-    // --- CONFIG FIREBASE ---
     const firebaseConfig = {
         apiKey: "AIzaSyDBcLEJw2PiFoBvocr3Zq01sRjjakteHfs",
         authDomain: "app-controle-gastos-1e658.firebaseapp.com",
@@ -283,7 +284,6 @@
         document.getElementById('passError').innerText = "";
     }
 
-    // --- VARIÁVEIS APP ---
     let currentDocId = "";
     let isReceiving = false;
     let saveTimer;
@@ -321,15 +321,16 @@
         
         try {
             await setDoc(doc(db, "gastos_namorada", currentDocId), defaultData);
-            alert("Mês resetado com sucesso! Agora o layout está correto.");
+            alert("Mês resetado com sucesso!");
         } catch(e) {
             alert("Erro ao resetar: " + e.message);
         }
         isReceiving = false;
     }
 
+    // --- NOVA LÓGICA DE COPIAR COM INCREMENTO DE PARCELA (1/10 -> 2/10) ---
     window.copyPreviousMonth = async function() {
-        if(!confirm("Importar dados do mês anterior?")) return;
+        if(!confirm("Importar dados do mês anterior? As parcelas (ex: 1/10) serão atualizadas automaticamente!")) return;
 
         const parts = currentDocId.split('-');
         let year = parseInt(parts[0]);
@@ -346,12 +347,28 @@
             if (docSnap.exists()) {
                 const data = docSnap.data();
                 data.paidDebtors = []; 
+                
+                // LÓGICA DE INCREMENTO
+                const incrementInst = (list) => {
+                    list.forEach(item => {
+                        if (item.inst && item.inst.includes('/')) {
+                            let [cur, tot] = item.inst.split('/').map(n => parseInt(n));
+                            if (!isNaN(cur) && !isNaN(tot) && cur < tot) {
+                                item.inst = `${cur + 1}/${tot}`;
+                            }
+                        }
+                    });
+                };
+
+                if (data.main) incrementInst(data.main);
+                if (data.inter) incrementInst(data.inter);
+
                 isReceiving = true; 
                 updateScreen(data); 
                 setTimeout(() => { 
                     isReceiving = false; 
                     saveData(true); 
-                    alert("Dados importados!");
+                    alert("Dados importados e parcelas atualizadas!");
                 }, 500);
             } else {
                 alert("Sem dados em " + prevId);
@@ -359,6 +376,7 @@
         } catch(e) { console.error(e); alert("Erro ao importar."); }
     }
 
+    // --- CORREÇÃO DO FOCO: IGNORA ATUALIZAÇÃO SE FOR LOCAL ---
     function loadMonthData(dateString) {
         currentDocId = dateString;
         document.getElementById('syncStatus').innerText = "Carregando...";
@@ -366,8 +384,12 @@
         
         const docRef = doc(db, "gastos_namorada", currentDocId);
 
-        unsubscribe = onSnapshot(docRef, (docSnap) => {
+        // includeMetadataChanges: true PERMITE SABER SE É MUDANÇA LOCAL
+        unsubscribe = onSnapshot(docRef, { includeMetadataChanges: true }, (docSnap) => {
             if (docSnap.exists()) {
+                // SE TEM PENDING WRITES, É MUDANÇA LOCAL -> NÃO REDESENHA A TELA
+                if (docSnap.metadata.hasPendingWrites) return;
+
                 isReceiving = true;
                 const data = docSnap.data();
                 window.paidDebtors = data.paidDebtors || [];
@@ -387,7 +409,6 @@
         
         if (data.inter === undefined) data.inter = []; 
 
-        // Garante que Inter e Faturas existam
         if (data.main) {
              if (!data.main.some(i => i.id === 'inter_auto')) {
                  data.main.unshift({ icon: '💳', name: 'Meu Inter', value: 0, isMine: true, locked: true, id: 'inter_auto' });
@@ -506,11 +527,9 @@
         return { debtors, myShare };
     }
 
-    // BOILERPLATE
     window.addMainRow = () => { addMainRowHTML(document.querySelector("#mainTable tbody"), {icon:'💸',name:'',value:'',isMine:true}); calculateAndSchedule(); }
     window.addSplitRow = (id) => { addSplitRowHTML(document.querySelector(`#${id} tbody`), {name:'',desc:'',inst:'',value:''}); calculateAndSchedule(); }
     
-    // --- ALTERAÇÃO AQUI: ADICIONADO CAMPOS DESC E INST ---
     function addMainRowHTML(tbody, item) {
         const tr = document.createElement("tr");
         let opts = window.iconsList.map(i => `<option value="${i}" ${i === item.icon ? 'selected' : ''}>${i}</option>`).join('');
@@ -520,10 +539,8 @@
         tr.innerHTML = `
             <td><select class="icon-select" onchange="calculateAndSchedule()">${opts}</select></td>
             <td><input type="text" class="td-input" value="${item.name}" ${locked} oninput="calculateAndSchedule()"></td>
-            
             <td><input type="text" class="td-input" value="${item.desc || ''}" placeholder="Detalhe" oninput="calculateAndSchedule()"></td>
-            <td><input type="text" class="td-input" value="${item.inst || ''}" placeholder="1/12" style="text-align:center" oninput="calculateAndSchedule()"></td>
-            
+            <td><input type="text" class="td-input" value="${item.inst || ''}" placeholder="1/10" style="text-align:center" oninput="calculateAndSchedule()"></td>
             <td><input type="number" class="td-input val-input" value="${item.value}" step="0.01" id="${item.id || ''}" ${locked} oninput="calculateAndSchedule()"></td>
             <td style="text-align:center"><input type="checkbox" ${item.isMine ? 'checked' : ''} onchange="calculateAndSchedule()"></td>
             <td>${del}</td>
@@ -572,15 +589,13 @@
             main: [], inter: [] 
         };
         
-        // --- ATUALIZAÇÃO DO SALVAMENTO (Main Table) ---
         document.querySelectorAll('#mainTable tbody tr').forEach(tr => {
             const inputs = tr.querySelectorAll('input');
-            // Ordem dos inputs: [0]Nome, [1]Desc, [2]Parc, [3]Valor, [4]Checkbox
             data.main.push({ 
                 icon: tr.querySelector('.icon-select').value, 
                 name: inputs[0].value, 
-                desc: inputs[1].value, // Salva Descrição
-                inst: inputs[2].value, // Salva Parcela
+                desc: inputs[1].value, 
+                inst: inputs[2].value, 
                 value: inputs[3].value, 
                 isMine: inputs[4].checked, 
                 locked: inputs[3].hasAttribute('readonly'), 
@@ -594,5 +609,4 @@
     }
 </script>
 </body>
-
 </html>
