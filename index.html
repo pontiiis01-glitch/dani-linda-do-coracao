@@ -5,18 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Finanças Dani">
     <title>Finanças da Dani 💖</title>
 
     <link rel="apple-touch-icon" href="icone.png">
     <link rel="icon" type="image/png" href="icone.png">
+    <link rel="shortcut icon" href="icone.png">
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
         :root {
-            /* TEMA ROSE/PINK PARA DANIELA */
-            --primary: #db2777; 
+            --primary: #db2777; /* Rosa Pink */
             --primary-dark: #be185d; 
             --bg-body: #fff1f2; 
             --bg-card: #ffffff;
@@ -28,9 +29,6 @@
             --danger: #ef4444; 
             --warning: #f59e0b; 
             
-            /* CORES ESPECÍFICAS DA PLANILHA */
-            --igor: #2563eb; /* Azul para Igor */
-            --lucas: #059669; /* Verde para Lucas */
             --inter: #ff7a00; /* Laranja Inter */
         }
 
@@ -146,9 +144,7 @@
 
         footer { text-align: center; font-size: 0.8rem; color: var(--text-muted); margin-top: 40px; }
 
-        /* ESTILOS CARTÕES (ADAPTADOS PARA A PLANILHA DELA) */
-        .style-igor { border-left: 5px solid var(--igor); } .style-igor h2 { color: var(--igor); }
-        .style-lucas { border-left: 5px solid var(--lucas); } .style-lucas h2 { color: var(--lucas); }
+        /* ESTILOS CARTÕES */
         .style-inter { border-left: 5px solid var(--inter); } .style-inter h2 { color: var(--inter); }
         
         .bill-input { width: 100px; text-align: right; font-weight: bold; padding: 5px; border-radius: 5px; border: 1px solid #fecdd3; color: var(--primary-dark); }
@@ -197,33 +193,15 @@
     </div>
 
     <div class="section">
-        <div class="sec-header"><h2>📉 Gastos Fixos (Tabela 1)</h2></div>
+        <div class="sec-header"><h2>📉 Gastos Fixos & Dívidas</h2></div>
         <div class="sec-body">
             <div class="table-wrap"><table id="mainTable"><thead><tr><th style="width:40px">Ícone</th><th>Item</th><th style="width:100px">Valor</th><th style="width:40px; text-align:center">Meu?</th><th style="width:30px"></th></tr></thead><tbody></tbody></table></div>
             <button class="btn-add" onclick="addMainRow()">+ Adicionar Gasto Fixo</button>
         </div>
     </div>
 
-    <div class="section style-igor">
-        <div class="sec-header"><h2>💳 Cartão do Igor</h2><div><small>FATURA:</small><input type="number" id="igorTotalBill" class="bill-input" oninput="calculateAll()"></div></div>
-        <div class="sec-body">
-            <div class="table-wrap"><table id="igorTable"><thead><tr><th>Quem</th><th>Desc.</th><th>Parc.</th><th>Valor</th><th></th></tr></thead><tbody></tbody></table></div>
-            <button class="btn-add" onclick="addSplitRow('igorTable')">+ Adicionar no Igor</button>
-            <div style="text-align:right; margin-top:10px; color:var(--igor)">Minha parte: <strong id="igorMyShareDisplay">R$ 0,00</strong></div>
-        </div>
-    </div>
-
-    <div class="section style-lucas">
-        <div class="sec-header"><h2>💳 Cartão do Lucas</h2><div><small>FATURA:</small><input type="number" id="lucasTotalBill" class="bill-input" oninput="calculateAll()"></div></div>
-        <div class="sec-body">
-            <div class="table-wrap"><table id="lucasTable"><thead><tr><th>Quem</th><th>Desc.</th><th>Parc.</th><th>Valor</th><th></th></tr></thead><tbody></tbody></table></div>
-            <button class="btn-add" onclick="addSplitRow('lucasTable')">+ Adicionar no Lucas</button>
-            <div style="text-align:right; margin-top:10px; color:var(--lucas)">Minha parte: <strong id="lucasMyShareDisplay">R$ 0,00</strong></div>
-        </div>
-    </div>
-
     <div class="section style-inter">
-        <div class="sec-header"><h2>💳 Meu Inter</h2><div><small>FATURA:</small><input type="number" id="interTotalBill" class="bill-input" oninput="calculateAll()"></div></div>
+        <div class="sec-header"><h2>💳 Meu Cartão Inter</h2><div><small>FATURA:</small><input type="number" id="interTotalBill" class="bill-input" oninput="calculateAll()"></div></div>
         <div class="sec-body">
             <div class="table-wrap"><table id="interTable"><thead><tr><th>Quem</th><th>Desc.</th><th>Parc.</th><th>Valor</th><th></th></tr></thead><tbody></tbody></table></div>
             <button class="btn-add" onclick="addSplitRow('interTable')">+ Adicionar no Inter</button>
@@ -232,7 +210,7 @@
     </div>
 
     <div class="section" style="border-left: 5px solid #10b981;">
-        <div class="sec-header"><h2 style="color:#059669">💰 Controle de Dívidas</h2></div>
+        <div class="sec-header"><h2 style="color:#059669">💰 A Receber</h2></div>
         <div class="sec-body">
             <div class="debt-summary">
                 <div class="ds-box"><div class="ds-lbl">A Receber</div><div class="ds-val" id="totalToReceive" style="color:#ef4444">R$ 0,00</div></div>
@@ -263,8 +241,7 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // --- SENHA DELA ---
-    const SENHA_DO_SISTEMA = "0000"; // <--- SENHA (Pode alterar)
+    const SENHA_DO_SISTEMA = "0000"; 
 
     window.checkPassword = function() {
         const input = document.getElementById('passInput').value;
@@ -299,8 +276,7 @@
     let chartInstance = null;
     
     window.paidDebtors = [];
-    // ÍCONES ADAPTADOS PARA OS GASTOS DELA (Muay Thai, Disney, etc)
-    window.iconsList = ["💸", "🏠", "📶", "🏰", "🎧", "🥊", "💅", "✍️", "🚗", "🛒", "💄", "🏥", "🏋️"];
+    window.iconsList = ["💸", "🏠", "📶", "🏰", "🎧", "🥊", "💅", "✍️", "🚗", "🛒", "💄", "🏥", "🏋️", "👱", "🧔"];
 
     function initApp() {
         const now = new Date();
@@ -335,7 +311,6 @@
         document.getElementById('syncStatus').innerText = "Buscando " + prevId + "...";
 
         try {
-            // COLEÇÃO SEPARADA: gastos_namorada
             const docSnap = await getDoc(doc(db, "gastos_namorada", prevId));
             if (docSnap.exists()) {
                 const data = docSnap.data();
@@ -358,7 +333,6 @@
         document.getElementById('syncStatus').innerText = "Carregando...";
         if (unsubscribe) unsubscribe();
         
-        // COLEÇÃO SEPARADA
         const docRef = doc(db, "gastos_namorada", currentDocId);
 
         unsubscribe = onSnapshot(docRef, (docSnap) => {
@@ -380,35 +354,29 @@
     function updateScreen(data) {
         if (!data) data = getDefaultData();
         
-        // Garante que os cartões automáticos existam
-        if (data.main && !data.main.some(i => i.id === 'igor_auto')) {
-             data.main.unshift({ icon: '💳', name: 'Cartão Igor', value: 0, isMine: true, locked: true, id: 'igor_auto' });
-             data.main.unshift({ icon: '💳', name: 'Cartão Lucas', value: 0, isMine: true, locked: true, id: 'lucas_auto' });
+        // Garante que o cartão automático exista
+        if (data.main && !data.main.some(i => i.id === 'inter_auto')) {
              data.main.unshift({ icon: '💳', name: 'Meu Inter', value: 0, isMine: true, locked: true, id: 'inter_auto' });
         }
 
         document.getElementById('salary').value = data.salary || 0;
         document.getElementById('emergencyFund').value = data.emergency || 0;
-        document.getElementById('igorTotalBill').value = data.igorTotal || 0;
-        document.getElementById('lucasTotalBill').value = data.lucasTotal || 0;
         document.getElementById('interTotalBill').value = data.interTotal || 0;
 
         renderTable('mainTable', data.main || [], 'main');
-        renderTable('igorTable', data.igor || [], 'split');
-        renderTable('lucasTable', data.lucas || [], 'split');
         renderTable('interTable', data.inter || [], 'split');
         calculateAll();
     }
 
     function getDefaultData() {
         return {
-            salary: 2271.27, // VALOR EXATO DA PLANILHA (PÁG 3)
-            emergency: 0, igorTotal: 0, lucasTotal: 0, interTotal: 0,
+            salary: 2271.27, 
+            emergency: 0, interTotal: 0,
             main: [
-                // GASTOS FIXOS (TABELA 1 DA PLANILHA)
-                { icon: '💳', name: 'Cartão Igor', value: 0, isMine: true, locked: true, id: 'igor_auto' },
-                { icon: '💳', name: 'Cartão Lucas', value: 0, isMine: true, locked: true, id: 'lucas_auto' },
+                // GASTOS FIXOS + DÍVIDAS IGOR/LUCAS
                 { icon: '💳', name: 'Meu Inter', value: 0, isMine: true, locked: true, id: 'inter_auto' },
+                { icon: '👱', name: 'Fatura Igor', value: 0, isMine: true },  // <--- AQUI (Ela edita o valor total)
+                { icon: '🧔', name: 'Fatura Lucas', value: 0, isMine: true }, // <--- AQUI (Ela edita o valor total)
                 { icon: '📶', name: 'Claro Flex', value: 40.00, isMine: true },
                 { icon: '🏰', name: 'Disney', value: 11.71, isMine: true },
                 { icon: '🏋️', name: 'Academia', value: 95.00, isMine: true },
@@ -417,7 +385,7 @@
                 { icon: '💅', name: 'Unhas', value: 100.00, isMine: true },
                 { icon: '✍️', name: 'Concursos', value: 100.00, isMine: true },
                 { icon: '🛒', name: 'Supermercado', value: 100.00, isMine: true }
-            ], igor: [], lucas: [], inter: [], paidDebtors: []
+            ], inter: [], paidDebtors: []
         };
     }
 
@@ -428,8 +396,6 @@
     }
 
     window.calculateAll = function() {
-        const igor = processCard('igorTable', 'igorTotalBill', 'igorMyShareDisplay', 'igor_auto');
-        const lucas = processCard('lucasTable', 'lucasTotalBill', 'lucasMyShareDisplay', 'lucas_auto');
         const inter = processCard('interTable', 'interTotalBill', 'interMyShareDisplay', 'inter_auto');
 
         let totalExpenses = 0; let myRealExpenses = 0; let fixedSum = 0;
@@ -451,9 +417,9 @@
         document.getElementById('remaining').innerText = fmt(salary - totalExpenses);
         document.getElementById('myRealExpenses').innerText = fmt(myRealExpenses);
 
-        updateDebtors({ ...igor.debtors }, { ...lucas.debtors }, { ...inter.debtors }, {});
+        updateDebtors({ ...inter.debtors }, {}, {}, {});
         
-        const cardsTotal = igor.myShare + lucas.myShare + inter.myShare;
+        const cardsTotal = inter.myShare;
         updateChart(fixedSum, cardsTotal, emergency, salary - totalExpenses);
     }
 
@@ -465,7 +431,7 @@
         chartInstance = new Chart(ctx, {
             type: 'doughnut',
             data: {
-                labels: ['Fixos', 'Cartões', 'Reserva', 'Livre'],
+                labels: ['Fixos/Dívidas', 'Cartão Inter', 'Reserva', 'Livre'],
                 datasets: [{
                     data: [fixed, cards, emerg, rest],
                     backgroundColor: ['#db2777', '#f59e0b', '#9333ea', '#10b981'],
@@ -548,15 +514,13 @@
         const data = { 
             salary: document.getElementById('salary').value, 
             emergency: document.getElementById('emergencyFund').value, 
-            igorTotal: document.getElementById('igorTotalBill').value, 
-            lucasTotal: document.getElementById('lucasTotalBill').value, 
             interTotal: document.getElementById('interTotalBill').value, 
             paidDebtors: window.paidDebtors, 
-            main: [], igor: [], lucas: [], inter: [] 
+            main: [], inter: [] 
         };
         document.querySelectorAll('#mainTable tbody tr').forEach(tr => { data.main.push({ icon: tr.querySelector('.icon-select').value, name: tr.querySelector('input[type="text"]').value, value: tr.querySelector('.val-input').value, isMine: tr.querySelector('input[type="checkbox"]').checked, locked: tr.querySelector('.val-input').hasAttribute('readonly'), id: tr.querySelector('.val-input').id || null }); });
         const sc = (id, arr) => { document.querySelectorAll(`#${id} tbody tr`).forEach(tr => { const i = tr.querySelectorAll('input'); arr.push({ name: i[0].value, desc: i[1].value, inst: i[2].value, value: i[3].value }); }); };
-        sc('igorTable', data.igor); sc('lucasTable', data.lucas); sc('interTable', data.inter);
+        sc('interTable', data.inter);
         try { await setDoc(doc(db, "gastos_namorada", currentDocId), data); document.getElementById('syncStatus').innerHTML = '<span style="color:#db2777">☁ Salvo</span>'; } catch (e) { console.error(e); document.getElementById('syncStatus').innerText = "Erro Save"; }
     }
 </script>
