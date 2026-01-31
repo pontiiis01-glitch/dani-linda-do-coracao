@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Finanças Dela 💖</title>
+    <title>Finanças da Dani 💖</title>
 
     <link rel="apple-touch-icon" href="icone.png">
     <link rel="icon" type="image/png" href="icone.png">
@@ -15,10 +15,10 @@
     
     <style>
         :root {
-            /* MUDANÇA DE COR PARA DIFERENCIAR DO SEU */
-            --primary: #db2777; /* Rosa/Magenta */
+            /* TEMA ROSE/PINK PARA DANIELA */
+            --primary: #db2777; 
             --primary-dark: #be185d; 
-            --bg-body: #fff1f2; /* Fundo levemente rosado */
+            --bg-body: #fff1f2; 
             --bg-card: #ffffff;
             --text-main: #0f172a; 
             --text-muted: #64748b; 
@@ -28,11 +28,10 @@
             --danger: #ef4444; 
             --warning: #f59e0b; 
             
-            /* Cores dos Bancos */
-            --nubank: #820ad1;
-            --inter: #ff7a00;
-            --c6: #2e2e2e;
-            --itau: #ec7000;
+            /* CORES ESPECÍFICAS DA PLANILHA */
+            --igor: #2563eb; /* Azul para Igor */
+            --lucas: #059669; /* Verde para Lucas */
+            --inter: #ff7a00; /* Laranja Inter */
         }
 
         body { font-family: 'Inter', sans-serif; background-color: var(--bg-body); color: var(--text-main); margin: 0; padding: 0; }
@@ -147,11 +146,10 @@
 
         footer { text-align: center; font-size: 0.8rem; color: var(--text-muted); margin-top: 40px; }
 
-        /* ESTILOS CARTÕES (PERSONALIZADOS PARA ELA) */
-        .style-nubank { border-left: 5px solid var(--nubank); } .style-nubank h2 { color: var(--nubank); }
+        /* ESTILOS CARTÕES (ADAPTADOS PARA A PLANILHA DELA) */
+        .style-igor { border-left: 5px solid var(--igor); } .style-igor h2 { color: var(--igor); }
+        .style-lucas { border-left: 5px solid var(--lucas); } .style-lucas h2 { color: var(--lucas); }
         .style-inter { border-left: 5px solid var(--inter); } .style-inter h2 { color: var(--inter); }
-        .style-c6 { border-left: 5px solid var(--c6); } .style-c6 h2 { color: var(--c6); }
-        .style-itau { border-left: 5px solid var(--itau); } .style-itau h2 { color: var(--itau); }
         
         .bill-input { width: 100px; text-align: right; font-weight: bold; padding: 5px; border-radius: 5px; border: 1px solid #fecdd3; color: var(--primary-dark); }
     </style>
@@ -161,13 +159,13 @@
 <div id="lockScreen">
     <div class="lock-box">
         <div style="font-size:3rem; margin-bottom:10px;">💖</div>
-        <h2>Olá, Babi!</h2>
+        <h2>Olá, Dani!</h2>
         <p style="color:#64748b; font-size:0.9rem;">Digite sua senha para organizar</p>
         
         <input type="password" id="passInput" class="lock-input" placeholder="****" inputmode="numeric">
         <div id="passError" class="error-msg"></div>
         
-        <button class="btn-unlock" onclick="checkPassword()">ACESSAR MEUS GASTOS</button>
+        <button class="btn-unlock" onclick="checkPassword()">ACESSAR PLANILHA</button>
     </div>
 </div>
 
@@ -187,7 +185,7 @@
     </header>
 
     <div class="dashboard-grid">
-        <div class="card-stat c-salary"><h3>Renda Mensal</h3><input type="number" id="salary" class="stat-input" value="0" oninput="calculateAll()"></div>
+        <div class="card-stat c-salary"><h3>Salário</h3><input type="number" id="salary" class="stat-input" value="0" oninput="calculateAll()"></div>
         <div class="card-stat c-emerg"><h3>🚨 Reserva</h3><input type="number" id="emergencyFund" class="stat-input" value="0" oninput="calculateAll()"></div>
         <div class="card-stat c-total"><h3>Total Saídas</h3><div class="val" id="totalExpenses">R$ 0,00</div></div>
         <div class="card-stat c-rest"><h3>Livre para Gastar</h3><div class="val" id="remaining">R$ 0,00</div></div>
@@ -199,24 +197,33 @@
     </div>
 
     <div class="section">
-        <div class="sec-header"><h2>📉 Gastos Fixos</h2></div>
+        <div class="sec-header"><h2>📉 Gastos Fixos (Tabela 1)</h2></div>
         <div class="sec-body">
             <div class="table-wrap"><table id="mainTable"><thead><tr><th style="width:40px">Ícone</th><th>Item</th><th style="width:100px">Valor</th><th style="width:40px; text-align:center">Meu?</th><th style="width:30px"></th></tr></thead><tbody></tbody></table></div>
             <button class="btn-add" onclick="addMainRow()">+ Adicionar Gasto Fixo</button>
         </div>
     </div>
 
-    <div class="section style-nubank">
-        <div class="sec-header"><h2>💳 Nubank</h2><div><small>FATURA:</small><input type="number" id="nubankTotalBill" class="bill-input" oninput="calculateAll()"></div></div>
+    <div class="section style-igor">
+        <div class="sec-header"><h2>💳 Cartão do Igor</h2><div><small>FATURA:</small><input type="number" id="igorTotalBill" class="bill-input" oninput="calculateAll()"></div></div>
         <div class="sec-body">
-            <div class="table-wrap"><table id="nubankTable"><thead><tr><th>Quem</th><th>Desc.</th><th>Parc.</th><th>Valor</th><th></th></tr></thead><tbody></tbody></table></div>
-            <button class="btn-add" onclick="addSplitRow('nubankTable')">+ Adicionar no Nubank</button>
-            <div style="text-align:right; margin-top:10px; color:var(--nubank)">Minha parte: <strong id="nubankMyShareDisplay">R$ 0,00</strong></div>
+            <div class="table-wrap"><table id="igorTable"><thead><tr><th>Quem</th><th>Desc.</th><th>Parc.</th><th>Valor</th><th></th></tr></thead><tbody></tbody></table></div>
+            <button class="btn-add" onclick="addSplitRow('igorTable')">+ Adicionar no Igor</button>
+            <div style="text-align:right; margin-top:10px; color:var(--igor)">Minha parte: <strong id="igorMyShareDisplay">R$ 0,00</strong></div>
+        </div>
+    </div>
+
+    <div class="section style-lucas">
+        <div class="sec-header"><h2>💳 Cartão do Lucas</h2><div><small>FATURA:</small><input type="number" id="lucasTotalBill" class="bill-input" oninput="calculateAll()"></div></div>
+        <div class="sec-body">
+            <div class="table-wrap"><table id="lucasTable"><thead><tr><th>Quem</th><th>Desc.</th><th>Parc.</th><th>Valor</th><th></th></tr></thead><tbody></tbody></table></div>
+            <button class="btn-add" onclick="addSplitRow('lucasTable')">+ Adicionar no Lucas</button>
+            <div style="text-align:right; margin-top:10px; color:var(--lucas)">Minha parte: <strong id="lucasMyShareDisplay">R$ 0,00</strong></div>
         </div>
     </div>
 
     <div class="section style-inter">
-        <div class="sec-header"><h2>💳 Banco Inter</h2><div><small>FATURA:</small><input type="number" id="interTotalBill" class="bill-input" oninput="calculateAll()"></div></div>
+        <div class="sec-header"><h2>💳 Meu Inter</h2><div><small>FATURA:</small><input type="number" id="interTotalBill" class="bill-input" oninput="calculateAll()"></div></div>
         <div class="sec-body">
             <div class="table-wrap"><table id="interTable"><thead><tr><th>Quem</th><th>Desc.</th><th>Parc.</th><th>Valor</th><th></th></tr></thead><tbody></tbody></table></div>
             <button class="btn-add" onclick="addSplitRow('interTable')">+ Adicionar no Inter</button>
@@ -224,26 +231,8 @@
         </div>
     </div>
 
-    <div class="section style-c6">
-        <div class="sec-header"><h2>💳 C6 / Outro</h2><div><small>FATURA:</small><input type="number" id="c6TotalBill" class="bill-input" oninput="calculateAll()"></div></div>
-        <div class="sec-body">
-            <div class="table-wrap"><table id="c6Table"><thead><tr><th>Quem</th><th>Desc.</th><th>Parc.</th><th>Valor</th><th></th></tr></thead><tbody></tbody></table></div>
-            <button class="btn-add" onclick="addSplitRow('c6Table')">+ Adicionar C6/Outro</button>
-            <div style="text-align:right; margin-top:10px; color:var(--c6)">Minha parte: <strong id="c6MyShareDisplay">R$ 0,00</strong></div>
-        </div>
-    </div>
-
-    <div class="section style-itau">
-        <div class="sec-header"><h2>💳 Itaú / Crédito</h2><div><small>FATURA:</small><input type="number" id="itauTotalBill" class="bill-input" oninput="calculateAll()"></div></div>
-        <div class="sec-body">
-            <div class="table-wrap"><table id="itauTable"><thead><tr><th>Quem</th><th>Desc.</th><th>Parc.</th><th>Valor</th><th></th></tr></thead><tbody></tbody></table></div>
-            <button class="btn-add" onclick="addSplitRow('itauTable')">+ Adicionar Itaú</button>
-            <div style="text-align:right; margin-top:10px; color:var(--itau)">Minha parte: <strong id="itauMyShareDisplay">R$ 0,00</strong></div>
-        </div>
-    </div>
-
     <div class="section" style="border-left: 5px solid #10b981;">
-        <div class="sec-header"><h2 style="color:#059669">💰 A Receber / Empréstimos</h2></div>
+        <div class="sec-header"><h2 style="color:#059669">💰 Controle de Dívidas</h2></div>
         <div class="sec-body">
             <div class="debt-summary">
                 <div class="ds-box"><div class="ds-lbl">A Receber</div><div class="ds-val" id="totalToReceive" style="color:#ef4444">R$ 0,00</div></div>
@@ -253,14 +242,14 @@
         </div>
     </div>
 
-    <footer>Finanças Pessoais 💖</footer>
+    <footer>Controle Financeiro da Daniela 💖</footer>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
     import { getFirestore, doc, onSnapshot, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
-    // --- CONFIG FIREBASE (Pode manter o mesmo, mudei a coleção abaixo) ---
+    // --- CONFIG FIREBASE ---
     const firebaseConfig = {
         apiKey: "AIzaSyDBcLEJw2PiFoBvocr3Zq01sRjjakteHfs",
         authDomain: "app-controle-gastos-1e658.firebaseapp.com",
@@ -275,7 +264,7 @@
     const db = getFirestore(app);
 
     // --- SENHA DELA ---
-    const SENHA_DO_SISTEMA = "0000"; // <--- COLOQUE A SENHA DELA AQUI!
+    const SENHA_DO_SISTEMA = "0000"; // <--- SENHA (Pode alterar)
 
     window.checkPassword = function() {
         const input = document.getElementById('passInput').value;
@@ -310,8 +299,8 @@
     let chartInstance = null;
     
     window.paidDebtors = [];
-    // ADICIONEI ÍCONES FEMININOS/GERAIS (Beleza, Roupas, Etc)
-    window.iconsList = ["💸", "🏠", "💡", "💧", "📶", "💅", "👗", "💄", "🏋️", "🚗", "⛽", "🍔", "💊", "💳", "🎓", "✈️", "🐶"];
+    // ÍCONES ADAPTADOS PARA OS GASTOS DELA (Muay Thai, Disney, etc)
+    window.iconsList = ["💸", "🏠", "📶", "🏰", "🎧", "🥊", "💅", "✍️", "🚗", "🛒", "💄", "🏥", "🏋️"];
 
     function initApp() {
         const now = new Date();
@@ -333,23 +322,20 @@
     }
 
     window.copyPreviousMonth = async function() {
-        if(!confirm("Importar dados do mês anterior? (Valores atuais serão substituídos)")) return;
+        if(!confirm("Importar dados do mês anterior?")) return;
 
         const parts = currentDocId.split('-');
         let year = parseInt(parts[0]);
         let month = parseInt(parts[1]);
 
         month--; 
-        if (month === 0) {
-            month = 12;
-            year--;
-        }
+        if (month === 0) { month = 12; year--; }
 
         const prevId = `${year}-${String(month).padStart(2, '0')}`;
         document.getElementById('syncStatus').innerText = "Buscando " + prevId + "...";
 
         try {
-            // OBS: AQUI ESTÁ A MUDANÇA DA COLEÇÃO
+            // COLEÇÃO SEPARADA: gastos_namorada
             const docSnap = await getDoc(doc(db, "gastos_namorada", prevId));
             if (docSnap.exists()) {
                 const data = docSnap.data();
@@ -359,15 +345,12 @@
                 setTimeout(() => { 
                     isReceiving = false; 
                     saveData(true); 
-                    alert("Importado de " + prevId);
+                    alert("Dados importados!");
                 }, 500);
             } else {
                 alert("Sem dados em " + prevId);
             }
-        } catch(e) {
-            console.error(e);
-            alert("Erro ao importar.");
-        }
+        } catch(e) { console.error(e); alert("Erro ao importar."); }
     }
 
     function loadMonthData(dateString) {
@@ -375,7 +358,7 @@
         document.getElementById('syncStatus').innerText = "Carregando...";
         if (unsubscribe) unsubscribe();
         
-        // MUDANÇA IMPORTANTE: COLEÇÃO 'gastos_namorada'
+        // COLEÇÃO SEPARADA
         const docRef = doc(db, "gastos_namorada", currentDocId);
 
         unsubscribe = onSnapshot(docRef, (docSnap) => {
@@ -397,38 +380,44 @@
     function updateScreen(data) {
         if (!data) data = getDefaultData();
         
-        // Garante que o Nubank Auto exista
-        if (data.main && !data.main.some(i => i.id === 'nubank_auto')) {
-             data.main.unshift({ icon: '💳', name: 'Nubank', value: 0, isMine: true, locked: true, id: 'nubank_auto' });
+        // Garante que os cartões automáticos existam
+        if (data.main && !data.main.some(i => i.id === 'igor_auto')) {
+             data.main.unshift({ icon: '💳', name: 'Cartão Igor', value: 0, isMine: true, locked: true, id: 'igor_auto' });
+             data.main.unshift({ icon: '💳', name: 'Cartão Lucas', value: 0, isMine: true, locked: true, id: 'lucas_auto' });
+             data.main.unshift({ icon: '💳', name: 'Meu Inter', value: 0, isMine: true, locked: true, id: 'inter_auto' });
         }
 
         document.getElementById('salary').value = data.salary || 0;
         document.getElementById('emergencyFund').value = data.emergency || 0;
-        document.getElementById('nubankTotalBill').value = data.nubankTotal || 0;
+        document.getElementById('igorTotalBill').value = data.igorTotal || 0;
+        document.getElementById('lucasTotalBill').value = data.lucasTotal || 0;
         document.getElementById('interTotalBill').value = data.interTotal || 0;
-        document.getElementById('c6TotalBill').value = data.c6Total || 0;
-        document.getElementById('itauTotalBill').value = data.itauTotal || 0;
 
         renderTable('mainTable', data.main || [], 'main');
-        renderTable('nubankTable', data.nubank || [], 'split');
+        renderTable('igorTable', data.igor || [], 'split');
+        renderTable('lucasTable', data.lucas || [], 'split');
         renderTable('interTable', data.inter || [], 'split');
-        renderTable('c6Table', data.c6 || [], 'split');
-        renderTable('itauTable', data.itau || [], 'split');
         calculateAll();
     }
 
     function getDefaultData() {
         return {
-            salary: 0, emergency: 0, nubankTotal: 0, interTotal: 0, c6Total: 0, itauTotal: 0,
+            salary: 2271.27, // VALOR EXATO DA PLANILHA (PÁG 3)
+            emergency: 0, igorTotal: 0, lucasTotal: 0, interTotal: 0,
             main: [
-                { icon: '💳', name: 'Nubank', value: 0, isMine: true, locked: true, id: 'nubank_auto' },
-                { icon: '💳', name: 'Banco Inter', value: 0, isMine: true, locked: true, id: 'inter_auto' },
-                { icon: '💳', name: 'C6/Outro', value: 0, isMine: true, locked: true, id: 'c6_auto' },
-                { icon: '💳', name: 'Itaú', value: 0, isMine: true, locked: true, id: 'itau_auto' },
-                { icon: '💅', name: 'Estética/Unha', value: 0, isMine: true },
-                { icon: '📱', name: 'Celular', value: 0, isMine: true },
-                { icon: '🚗', name: 'Uber/Transporte', value: 0, isMine: true }
-            ], nubank: [], inter: [], c6: [], itau: [], paidDebtors: []
+                // GASTOS FIXOS (TABELA 1 DA PLANILHA)
+                { icon: '💳', name: 'Cartão Igor', value: 0, isMine: true, locked: true, id: 'igor_auto' },
+                { icon: '💳', name: 'Cartão Lucas', value: 0, isMine: true, locked: true, id: 'lucas_auto' },
+                { icon: '💳', name: 'Meu Inter', value: 0, isMine: true, locked: true, id: 'inter_auto' },
+                { icon: '📶', name: 'Claro Flex', value: 40.00, isMine: true },
+                { icon: '🏰', name: 'Disney', value: 11.71, isMine: true },
+                { icon: '🏋️', name: 'Academia', value: 95.00, isMine: true },
+                { icon: '🎧', name: 'Spotify (Lucas)', value: 15.95, isMine: true },
+                { icon: '🥊', name: 'Muay Thai', value: 130.00, isMine: true },
+                { icon: '💅', name: 'Unhas', value: 100.00, isMine: true },
+                { icon: '✍️', name: 'Concursos', value: 100.00, isMine: true },
+                { icon: '🛒', name: 'Supermercado', value: 100.00, isMine: true }
+            ], igor: [], lucas: [], inter: [], paidDebtors: []
         };
     }
 
@@ -439,10 +428,9 @@
     }
 
     window.calculateAll = function() {
-        const nubank = processCard('nubankTable', 'nubankTotalBill', 'nubankMyShareDisplay', 'nubank_auto');
+        const igor = processCard('igorTable', 'igorTotalBill', 'igorMyShareDisplay', 'igor_auto');
+        const lucas = processCard('lucasTable', 'lucasTotalBill', 'lucasMyShareDisplay', 'lucas_auto');
         const inter = processCard('interTable', 'interTotalBill', 'interMyShareDisplay', 'inter_auto');
-        const c6 = processCard('c6Table', 'c6TotalBill', 'c6MyShareDisplay', 'c6_auto');
-        const itau = processCard('itauTable', 'itauTotalBill', 'itauMyShareDisplay', 'itau_auto');
 
         let totalExpenses = 0; let myRealExpenses = 0; let fixedSum = 0;
         const emergency = parseFloat(document.getElementById('emergencyFund').value) || 0;
@@ -463,9 +451,9 @@
         document.getElementById('remaining').innerText = fmt(salary - totalExpenses);
         document.getElementById('myRealExpenses').innerText = fmt(myRealExpenses);
 
-        updateDebtors({ ...nubank.debtors }, { ...inter.debtors }, { ...c6.debtors }, { ...itau.debtors });
+        updateDebtors({ ...igor.debtors }, { ...lucas.debtors }, { ...inter.debtors }, {});
         
-        const cardsTotal = nubank.myShare + inter.myShare + c6.myShare + itau.myShare;
+        const cardsTotal = igor.myShare + lucas.myShare + inter.myShare;
         updateChart(fixedSum, cardsTotal, emergency, salary - totalExpenses);
     }
 
@@ -555,22 +543,20 @@
     function fmt(n) { return n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); }
     window.calculateAndSchedule = () => { calculateAll(); if (isReceiving) return; document.getElementById('syncStatus').innerText = "..."; clearTimeout(saveTimer); saveTimer = setTimeout(() => saveData(), 1000); }
     
-    // FUNÇÃO DE SALVAR ALTERADA PARA USAR 'gastos_namorada'
     async function saveData(force = false) {
         if (isReceiving && !force) return;
         const data = { 
             salary: document.getElementById('salary').value, 
             emergency: document.getElementById('emergencyFund').value, 
-            nubankTotal: document.getElementById('nubankTotalBill').value, 
+            igorTotal: document.getElementById('igorTotalBill').value, 
+            lucasTotal: document.getElementById('lucasTotalBill').value, 
             interTotal: document.getElementById('interTotalBill').value, 
-            c6Total: document.getElementById('c6TotalBill').value, 
-            itauTotal: document.getElementById('itauTotalBill').value, 
             paidDebtors: window.paidDebtors, 
-            main: [], nubank: [], inter: [], c6: [], itau: [] 
+            main: [], igor: [], lucas: [], inter: [] 
         };
         document.querySelectorAll('#mainTable tbody tr').forEach(tr => { data.main.push({ icon: tr.querySelector('.icon-select').value, name: tr.querySelector('input[type="text"]').value, value: tr.querySelector('.val-input').value, isMine: tr.querySelector('input[type="checkbox"]').checked, locked: tr.querySelector('.val-input').hasAttribute('readonly'), id: tr.querySelector('.val-input').id || null }); });
         const sc = (id, arr) => { document.querySelectorAll(`#${id} tbody tr`).forEach(tr => { const i = tr.querySelectorAll('input'); arr.push({ name: i[0].value, desc: i[1].value, inst: i[2].value, value: i[3].value }); }); };
-        sc('nubankTable', data.nubank); sc('interTable', data.inter); sc('c6Table', data.c6); sc('itauTable', data.itau);
+        sc('igorTable', data.igor); sc('lucasTable', data.lucas); sc('interTable', data.inter);
         try { await setDoc(doc(db, "gastos_namorada", currentDocId), data); document.getElementById('syncStatus').innerHTML = '<span style="color:#db2777">☁ Salvo</span>'; } catch (e) { console.error(e); document.getElementById('syncStatus').innerText = "Erro Save"; }
     }
 </script>
