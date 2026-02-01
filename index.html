@@ -8,10 +8,10 @@
     <meta name="apple-mobile-web-app-title" content="Finanças Dani">
     <title>Finanças da Dani 💖</title>
 
-    <link rel="icon" type="image/png" sizes="32x32" href="icone.png?v=7">
-    <link rel="icon" type="image/png" sizes="16x16" href="icone.png?v=7">
-    <link rel="shortcut icon" href="icone.png?v=7">
-    <link rel="apple-touch-icon" href="icone.png?v=7">
+    <link rel="icon" type="image/png" sizes="32x32" href="icone.png?v=8">
+    <link rel="icon" type="image/png" sizes="16x16" href="icone.png?v=8">
+    <link rel="shortcut icon" href="icone.png?v=8">
+    <link rel="apple-touch-icon" href="icone.png?v=8">
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -237,7 +237,7 @@
     
     <button class="btn-reset" onclick="resetMonthDefault()">⚠️ RESETAR PADRÃO DO MÊS (Correção)</button>
 
-    <footer>Versão 7.0 - Dani 💖</footer>
+    <footer>Versão 8.0 - Dani 💖</footer>
 </div>
 
 <script type="module">
@@ -257,7 +257,7 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    const SENHA_DO_SISTEMA = "0805"; // <--- SENHA NOVA AQUI
+    const SENHA_DO_SISTEMA = "0805"; 
 
     window.checkPassword = function() {
         const input = document.getElementById('passInput').value;
@@ -298,7 +298,6 @@
         const year = now.getFullYear();
         const month = String(now.getMonth() + 1).padStart(2, '0');
         
-        // Memória do Mês
         const storedMonth = localStorage.getItem('last_month_viewed');
         const defaultDate = storedMonth || `${year}-${month}`;
         
@@ -387,7 +386,7 @@
 
         unsubscribe = onSnapshot(docRef, { includeMetadataChanges: true }, (docSnap) => {
             if (docSnap.exists()) {
-                if (docSnap.metadata.hasPendingWrites) return; // Ignora se for local
+                if (docSnap.metadata.hasPendingWrites) return;
 
                 isReceiving = true;
                 const data = docSnap.data();
@@ -403,9 +402,8 @@
         });
     }
 
+    // --- CORREÇÃO DA LIMPEZA AUTOMÁTICA ---
     function updateScreen(data) {
-        // --- PROTEÇÃO DE FOCO (SOLUÇÃO DEFINITIVA) ---
-        // Se o usuário estiver com o cursor em um campo, NÃO atualiza a tela
         const activeEl = document.activeElement;
         const isTyping = activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'SELECT');
         if (isTyping) {
@@ -416,7 +414,12 @@
         if (!data) data = getDefaultData();
         if (data.inter === undefined) data.inter = []; 
 
+        // 1. LIMPEZA (VASSOURA): Remove IDs antigos
         if (data.main) {
+             const bannedIds = ['nubank_auto', 'c6_auto', 'itau_auto', 'bb_auto', 'mp_auto', 'passai_auto'];
+             data.main = data.main.filter(item => !bannedIds.includes(item.id));
+
+             // 2. GARANTE QUE OS CERTOS EXISTAM
              if (!data.main.some(i => i.id === 'inter_auto')) {
                  data.main.unshift({ icon: '💳', name: 'Meu Inter', value: 0, isMine: true, locked: true, id: 'inter_auto' });
              }
