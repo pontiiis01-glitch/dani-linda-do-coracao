@@ -8,10 +8,10 @@
     <meta name="apple-mobile-web-app-title" content="Finanças Dani">
     <title>Finanças da Dani 💖</title>
 
-    <link rel="icon" type="image/png" sizes="32x32" href="icone.png?v=11">
-    <link rel="icon" type="image/png" sizes="16x16" href="icone.png?v=11">
-    <link rel="shortcut icon" href="icone.png?v=11">
-    <link rel="apple-touch-icon" href="icone.png?v=11">
+    <link rel="icon" type="image/png" sizes="32x32" href="icone.png?v=12">
+    <link rel="icon" type="image/png" sizes="16x16" href="icone.png?v=12">
+    <link rel="shortcut icon" href="icone.png?v=12">
+    <link rel="apple-touch-icon" href="icone.png?v=12">
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -164,7 +164,7 @@
 
 <div id="loadingOverlay">
     <div class="spinner"></div>
-    <div style="font-weight:600; color:#db2777">Salvando e Trocando...</div>
+    <div style="font-weight:600; color:#db2777">Processando...</div>
 </div>
 
 <div id="lockScreen">
@@ -236,8 +236,8 @@
         </div>
     </div>
     
-    <button class="btn-reset" onclick="resetMonthDefault()">⚠️ RESETAR ESTE MÊS (Correção)</button>
-    <footer>Versão 11.0 - Dani 💖</footer>
+    <button class="btn-reset" onclick="resetMonthDefault()">⚠️ RESETAR ESTE MÊS (Não Bloqueia)</button>
+    <footer>Versão 12.0 - Dani 💖</footer>
 </div>
 
 <script type="module">
@@ -288,28 +288,20 @@
         loadMonthData(defaultDate);
     }
 
-    // --- FUNÇÃO DE TROCA SEGURA ---
     window.changeMonthSafe = async function() {
         const newDate = document.getElementById('monthPicker').value;
         if (!newDate || newDate === currentDocId) return;
 
-        // 1. Bloqueia a tela
         document.getElementById('loadingOverlay').style.display = 'flex';
         
-        // 2. Para qualquer listener anterior
         if (unsubscribe) unsubscribe();
         clearTimeout(saveTimer);
 
-        // 3. Salva o mês velho FORÇADO
-        if (currentDocId) {
-            console.log("Salvando mês anterior antes de sair:", currentDocId);
-            await saveDataSync(currentDocId); // Salva o que está na tela no ID antigo
+        if (currentDocId && !isReceiving) {
+            await saveDataSync(currentDocId); 
         }
 
-        // 4. Limpa a tela visualmente
         clearScreen();
-
-        // 5. Carrega o novo
         localStorage.setItem('last_month_viewed', newDate);
         loadMonthData(newDate);
     }
@@ -319,6 +311,54 @@
         document.querySelector("#interTable tbody").innerHTML = "";
         document.getElementById('salary').value = 0;
         document.getElementById('totalExpenses').innerText = "R$ 0,00";
+    }
+
+    // --- CORREÇÃO DO BOTÃO DE RESET (SEM RELOAD) ---
+    window.resetMonthDefault = async function() {
+        if(!confirm("Tem certeza? Isso vai limpar todos os dados deste mês agora.")) return;
+        
+        // 1. Para tudo
+        clearTimeout(saveTimer);
+        isReceiving = true; // Bloqueia temporariamente
+
+        // 2. Prepara dados zerados
+        const defaultData = getDefaultData();
+
+        // 3. Atualiza tela NA HORA
+        updateScreen(defaultData);
+
+        // 4. Salva no banco
+        try {
+            await setDoc(doc(db, "gastos_namorada", currentDocId), defaultData);
+            alert("Mês resetado com sucesso!");
+        } catch(e) {
+            console.error(e);
+            alert("Erro ao resetar no banco, mas a tela foi limpa.");
+        }
+
+        // 5. Libera
+        isReceiving = false;
+    }
+
+    window.copyPreviousMonth = async function() {
+        if(!confirm("Importar dados do mês anterior?")) return;
+        const parts = currentDocId.split('-');
+        let year = parseInt(parts[0]);
+        let month = parseInt(parts[1]);
+        month--; if (month === 0) { month = 12; year--; }
+        const prevId = `${year}-${String(month).padStart(2, '0')}`;
+        
+        try {
+            const docSnap = await getDoc(doc(db, "gastos_namorada", prevId));
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                data.paidDebtors = [];
+                const inc = (arr) => arr.forEach(i => { if(i.inst && i.inst.includes('/')){ let [c,t]=i.inst.split('/'); if(c<t) i.inst=`${parseInt(c)+1}/${t}`; } });
+                if(data.main) inc(data.main); if(data.inter) inc(data.inter);
+                updateScreen(data);
+                setTimeout(() => saveDataSync(currentDocId), 500);
+            } else { alert("Mês anterior vazio."); }
+        } catch(e) { alert("Erro ao importar."); }
     }
 
     function loadMonthData(dateString) {
@@ -331,7 +371,7 @@
             document.getElementById('loadingOverlay').style.display = 'none';
             
             if (docSnap.exists()) {
-                if (docSnap.metadata.hasPendingWrites) return; // Ignora eco local
+                if (docSnap.metadata.hasPendingWrites) return; 
                 isReceiving = true;
                 const data = docSnap.data();
                 window.paidDebtors = data.paidDebtors || [];
@@ -339,28 +379,21 @@
                 setTimeout(() => isReceiving = false, 500);
                 document.getElementById('syncStatus').innerHTML = '<span style="color:#db2777">☁ Sincronizado</span>';
             } else {
-                // Mês novo: carrega padrão e salva
                 window.paidDebtors = [];
                 const defaultData = getDefaultData();
                 updateScreen(defaultData);
-                saveDataSync(currentDocId); // Cria o documento no banco
+                saveDataSync(currentDocId); 
             }
         });
     }
 
-    // --- SALVAMENTO SÍNCRONO PARA TROCAS ---
     async function saveDataSync(targetId) {
         const data = captureScreenData();
         try {
             await setDoc(doc(db, "gastos_namorada", targetId), data);
-            console.log("Salvo com sucesso no ID:", targetId);
-        } catch(e) {
-            console.error("Erro ao salvar:", e);
-            alert("Erro ao salvar dados. Verifique sua conexão.");
-        }
+        } catch(e) { console.error("Erro save sync", e); }
     }
 
-    // --- SALVAMENTO AUTOMÁTICO (DEBOUNCE) ---
     window.calculateAndSchedule = () => {
         calculateAll();
         if (isReceiving) return;
@@ -377,8 +410,6 @@
             paidDebtors: window.paidDebtors, 
             main: [], inter: [] 
         };
-        
-        // Captura Gastos Fixos
         document.querySelectorAll('#mainTable tbody tr').forEach(tr => {
             const inputs = tr.querySelectorAll('input');
             data.main.push({ 
@@ -387,25 +418,20 @@
                 isMine: inputs[4].checked, locked: inputs[3].hasAttribute('readonly'), id: inputs[3].id || null 
             }); 
         });
-
-        // Captura Inter
         document.querySelectorAll('#interTable tbody tr').forEach(tr => {
             const i = tr.querySelectorAll('input');
             data.inter.push({ name: i[0].value, desc: i[1].value, inst: i[2].value, value: i[3].value });
         });
-        
         return data;
     }
 
     function updateScreen(data) {
-        // Se estiver digitando, não atualiza (exceto se for carga inicial isReceiving)
         const activeEl = document.activeElement;
         if (!isReceiving && activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'SELECT')) return;
 
         if (!data) data = getDefaultData();
         if (!data.inter) data.inter = []; 
 
-        // Limpeza de IDs antigos e garantia de padrões
         if (data.main) {
              const bannedIds = ['nubank_auto', 'c6_auto', 'itau_auto', 'bb_auto'];
              data.main = data.main.filter(item => !bannedIds.includes(item.id));
@@ -547,34 +573,6 @@
             data: { labels: ['Fixos', 'Inter', 'Reserva', 'Livre'], datasets: [{ data: [fixed, cards, emerg, rest], backgroundColor: ['#db2777', '#f59e0b', '#9333ea', '#10b981'], borderWidth: 0 }] },
             options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
         });
-    }
-
-    window.resetMonthDefault = async function() {
-        if(!confirm("Tem certeza? Isso APAGA tudo deste mês.")) return;
-        saveDataSync(currentDocId); // Salva vazio/padrão
-        location.reload(); // Recarrega para garantir
-    }
-
-    window.copyPreviousMonth = async function() {
-        if(!confirm("Importar dados do mês anterior?")) return;
-        const parts = currentDocId.split('-');
-        let year = parseInt(parts[0]);
-        let month = parseInt(parts[1]);
-        month--; if (month === 0) { month = 12; year--; }
-        const prevId = `${year}-${String(month).padStart(2, '0')}`;
-        
-        try {
-            const docSnap = await getDoc(doc(db, "gastos_namorada", prevId));
-            if (docSnap.exists()) {
-                const data = docSnap.data();
-                data.paidDebtors = [];
-                // Incrementa parcelas
-                const inc = (arr) => arr.forEach(i => { if(i.inst && i.inst.includes('/')){ let [c,t]=i.inst.split('/'); if(c<t) i.inst=`${parseInt(c)+1}/${t}`; } });
-                if(data.main) inc(data.main); if(data.inter) inc(data.inter);
-                updateScreen(data);
-                setTimeout(() => saveDataSync(currentDocId), 500);
-            } else { alert("Mês anterior vazio."); }
-        } catch(e) { alert("Erro ao copiar."); }
     }
 </script>
 </body>
