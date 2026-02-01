@@ -8,10 +8,10 @@
     <meta name="apple-mobile-web-app-title" content="Finanças Dani">
     <title>Finanças da Dani 💖</title>
 
-    <link rel="icon" type="image/png" sizes="32x32" href="icone.png?v=10">
-    <link rel="icon" type="image/png" sizes="16x16" href="icone.png?v=10">
-    <link rel="shortcut icon" href="icone.png?v=10">
-    <link rel="apple-touch-icon" href="icone.png?v=10">
+    <link rel="icon" type="image/png" sizes="32x32" href="icone.png?v=11">
+    <link rel="icon" type="image/png" sizes="16x16" href="icone.png?v=11">
+    <link rel="shortcut icon" href="icone.png?v=11">
+    <link rel="apple-touch-icon" href="icone.png?v=11">
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -33,10 +33,21 @@
 
         body { font-family: 'Inter', sans-serif; background-color: var(--bg-body); color: var(--text-main); margin: 0; padding: 0; }
         
+        /* LOADING */
+        #loadingOverlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.95);
+            z-index: 9999; display: none; align-items: center; justify-content: center; flex-direction: column;
+        }
+        .spinner {
+            width: 40px; height: 40px; border: 4px solid #fecdd3; border-top: 4px solid var(--primary);
+            border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
         /* TELA DE SENHA */
         #lockScreen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-body);
-            display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9990;
         }
         .lock-box {
             background: #fff; padding: 40px; border-radius: 20px; box-shadow: 0 10px 25px rgba(219, 39, 119, 0.15); 
@@ -55,21 +66,9 @@
         .btn-unlock:hover { background: var(--primary-dark); }
         .error-msg { color: var(--danger); font-size: 0.85rem; margin-top: 10px; min-height: 20px; font-weight: 600; }
 
-        /* LOADING OVERLAY */
-        #loadingOverlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9);
-            z-index: 9000; display: none; align-items: center; justify-content: center; flex-direction: column;
-        }
-        .spinner {
-            width: 40px; height: 40px; border: 4px solid #fecdd3; border-top: 4px solid var(--primary);
-            border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px;
-        }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
         /* APP CONTENT */
         #appContent { display: none; padding: 15px; padding-bottom: 100px; max-width: 1000px; margin: 0 auto; }
         
-        /* HEADER */
         header { display: flex; flex-direction: column; align-items: center; gap: 15px; margin-bottom: 20px; margin-top: 10px; }
         .controls-row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; align-items: center; }
         
@@ -165,19 +164,17 @@
 
 <div id="loadingOverlay">
     <div class="spinner"></div>
-    <div style="font-weight:600; color:#db2777">Carregando...</div>
+    <div style="font-weight:600; color:#db2777">Salvando e Trocando...</div>
 </div>
 
 <div id="lockScreen">
     <div class="lock-box">
         <div style="font-size:3rem; margin-bottom:10px;">💖</div>
         <h2>Olá, Dani!</h2>
-        <p style="color:#64748b; font-size:0.9rem;">Digite sua senha para organizar</p>
-        
+        <p style="color:#64748b; font-size:0.9rem;">Digite sua senha</p>
         <input type="password" id="passInput" class="lock-input" placeholder="****" inputmode="numeric">
         <div id="passError" class="error-msg"></div>
-        
-        <button class="btn-unlock" onclick="checkPassword()">ACESSAR PLANILHA</button>
+        <button class="btn-unlock" onclick="checkPassword()">ENTRAR</button>
     </div>
 </div>
 
@@ -186,7 +183,7 @@
         <div class="controls-row">
             <div class="date-control">
                 <span>📅</span>
-                <input type="month" id="monthPicker" onchange="changeMonth()">
+                <input type="month" id="monthPicker" onchange="changeMonthSafe()">
             </div>
             <button class="btn-copy" onclick="copyPreviousMonth()">
                 <span>🔄</span> Copiar Mês Anterior
@@ -204,26 +201,14 @@
         <div class="card-stat c-mine"><h3>Meu Custo Real</h3><div class="val" id="myRealExpenses">R$ 0,00</div></div>
     </div>
 
-    <div class="chart-container">
-        <canvas id="expenseChart"></canvas>
-    </div>
+    <div class="chart-container"><canvas id="expenseChart"></canvas></div>
 
     <div class="section">
         <div class="sec-header"><h2>📉 Gastos Fixos & Dívidas</h2></div>
         <div class="sec-body">
             <div class="table-wrap">
                 <table id="mainTable">
-                    <thead>
-                        <tr>
-                            <th style="width:40px">Ícone</th>
-                            <th>Item</th>
-                            <th>Desc.</th>
-                            <th style="width:60px; text-align:center">Parc.</th>
-                            <th style="width:100px">Valor</th>
-                            <th style="width:40px; text-align:center">Meu?</th>
-                            <th style="width:30px"></th>
-                        </tr>
-                    </thead>
+                    <thead><tr><th style="width:40px">Ícone</th><th>Item</th><th>Desc.</th><th style="width:60px; text-align:center">Parc.</th><th style="width:100px">Valor</th><th style="width:40px; text-align:center">Meu?</th><th style="width:30px"></th></tr></thead>
                     <tbody></tbody>
                 </table>
             </div>
@@ -251,9 +236,8 @@
         </div>
     </div>
     
-    <button class="btn-reset" onclick="resetMonthDefault()">⚠️ RESETAR PADRÃO DO MÊS (Correção)</button>
-
-    <footer>Versão 10.0 - Dani 💖</footer>
+    <button class="btn-reset" onclick="resetMonthDefault()">⚠️ RESETAR ESTE MÊS (Correção)</button>
+    <footer>Versão 11.0 - Dani 💖</footer>
 </div>
 
 <script type="module">
@@ -272,33 +256,21 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-
     const SENHA_DO_SISTEMA = "0805"; 
 
     window.checkPassword = function() {
         const input = document.getElementById('passInput').value;
-        const errorDiv = document.getElementById('passError');
-        
         if (input === SENHA_DO_SISTEMA) {
             document.getElementById('lockScreen').style.display = 'none';
             document.getElementById('appContent').style.display = 'block';
             initApp();
         } else {
-            errorDiv.innerText = "Senha incorreta!";
+            document.getElementById('passError').innerText = "Senha incorreta!";
             document.getElementById('passInput').value = "";
         }
     }
-
-    document.getElementById('passInput').addEventListener("keypress", function(event) {
-        if (event.key === "Enter") window.checkPassword();
-    });
-
-    window.lockApp = function() {
-        document.getElementById('lockScreen').style.display = 'flex';
-        document.getElementById('appContent').style.display = 'none';
-        document.getElementById('passInput').value = "";
-        document.getElementById('passError').innerText = "";
-    }
+    document.getElementById('passInput').addEventListener("keypress", (e) => { if(e.key==="Enter") window.checkPassword() });
+    window.lockApp = () => location.reload();
 
     let currentDocId = "";
     let isReceiving = false;
@@ -311,47 +283,35 @@
 
     function initApp() {
         const now = new Date();
-        const year = now.getFullYear();
-        const month = String(now.getMonth() + 1).padStart(2, '0');
-        
-        const storedMonth = localStorage.getItem('last_month_viewed');
-        const defaultDate = storedMonth || `${year}-${month}`;
-        
-        const picker = document.getElementById('monthPicker');
-        picker.value = defaultDate;
+        const defaultDate = localStorage.getItem('last_month_viewed') || `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+        document.getElementById('monthPicker').value = defaultDate;
         loadMonthData(defaultDate);
     }
 
-    // --- CORREÇÃO DE VAZAMENTO DE DADOS ENTRE MESES ---
-    window.changeMonth = async function() {
-        const picker = document.getElementById('monthPicker');
-        const newDate = picker.value;
-        
+    // --- FUNÇÃO DE TROCA SEGURA ---
+    window.changeMonthSafe = async function() {
+        const newDate = document.getElementById('monthPicker').value;
         if (!newDate || newDate === currentDocId) return;
 
-        // 1. Bloqueia a interface
+        // 1. Bloqueia a tela
         document.getElementById('loadingOverlay').style.display = 'flex';
-
-        // 2. Cancela qualquer salvamento pendente
+        
+        // 2. Para qualquer listener anterior
+        if (unsubscribe) unsubscribe();
         clearTimeout(saveTimer);
 
-        // 3. Salva os dados do Mês Atual (se houver) no ID Atual explicitamente
-        if (currentDocId && !isReceiving) {
-            await saveData(true, currentDocId); // Salva no ID VELHO
+        // 3. Salva o mês velho FORÇADO
+        if (currentDocId) {
+            console.log("Salvando mês anterior antes de sair:", currentDocId);
+            await saveDataSync(currentDocId); // Salva o que está na tela no ID antigo
         }
 
-        // 4. Limpa a tela visualmente para não misturar
-        if (unsubscribe) unsubscribe();
-        unsubscribe = null;
+        // 4. Limpa a tela visualmente
         clearScreen();
 
-        // 5. Atualiza o ID e carrega o novo
+        // 5. Carrega o novo
         localStorage.setItem('last_month_viewed', newDate);
-        
-        // Pequeno delay para garantir que o Firebase processou
-        setTimeout(() => {
-            loadMonthData(newDate);
-        }, 300);
+        loadMonthData(newDate);
     }
 
     function clearScreen() {
@@ -361,81 +321,17 @@
         document.getElementById('totalExpenses').innerText = "R$ 0,00";
     }
 
-    window.resetMonthDefault = async function() {
-        if(!confirm("Tem certeza? Isso vai APAGAR os lançamentos deste mês e colocar o padrão da Dani.")) return;
-        
-        isReceiving = true;
-        const defaultData = getDefaultData();
-        updateScreen(defaultData);
-        
-        try {
-            await setDoc(doc(db, "gastos_namorada", currentDocId), defaultData);
-            alert("Mês resetado com sucesso!");
-        } catch(e) {
-            alert("Erro ao resetar: " + e.message);
-        }
-        isReceiving = false;
-    }
-
-    window.copyPreviousMonth = async function() {
-        if(!confirm("Importar dados do mês anterior?")) return;
-
-        const parts = currentDocId.split('-');
-        let year = parseInt(parts[0]);
-        let month = parseInt(parts[1]);
-
-        month--; 
-        if (month === 0) { month = 12; year--; }
-
-        const prevId = `${year}-${String(month).padStart(2, '0')}`;
-        document.getElementById('syncStatus').innerText = "Buscando " + prevId + "...";
-
-        try {
-            const docSnap = await getDoc(doc(db, "gastos_namorada", prevId));
-            if (docSnap.exists()) {
-                const data = docSnap.data();
-                data.paidDebtors = []; 
-                
-                const incrementInst = (list) => {
-                    list.forEach(item => {
-                        if (item.inst && item.inst.includes('/')) {
-                            let [cur, tot] = item.inst.split('/').map(n => parseInt(n));
-                            if (!isNaN(cur) && !isNaN(tot) && cur < tot) {
-                                item.inst = `${cur + 1}/${tot}`;
-                            }
-                        }
-                    });
-                };
-
-                if (data.main) incrementInst(data.main);
-                if (data.inter) incrementInst(data.inter);
-
-                isReceiving = true; 
-                updateScreen(data); 
-                setTimeout(() => { 
-                    isReceiving = false; 
-                    saveData(true); 
-                    alert("Dados importados!");
-                }, 500);
-            } else {
-                alert("Sem dados em " + prevId);
-            }
-        } catch(e) { console.error(e); alert("Erro ao importar."); }
-    }
-
     function loadMonthData(dateString) {
         currentDocId = dateString;
         document.getElementById('syncStatus').innerText = "Carregando...";
         
         const docRef = doc(db, "gastos_namorada", currentDocId);
-
+        
         unsubscribe = onSnapshot(docRef, { includeMetadataChanges: true }, (docSnap) => {
-            document.getElementById('loadingOverlay').style.display = 'none'; // Libera a tela
-
+            document.getElementById('loadingOverlay').style.display = 'none';
+            
             if (docSnap.exists()) {
-                // Se for mudança local (minha digitação), ignora o update da tela
-                if (docSnap.metadata.hasPendingWrites) return; 
-
+                if (docSnap.metadata.hasPendingWrites) return; // Ignora eco local
                 isReceiving = true;
                 const data = docSnap.data();
                 window.paidDebtors = data.paidDebtors || [];
@@ -443,35 +339,85 @@
                 setTimeout(() => isReceiving = false, 500);
                 document.getElementById('syncStatus').innerHTML = '<span style="color:#db2777">☁ Sincronizado</span>';
             } else {
+                // Mês novo: carrega padrão e salva
                 window.paidDebtors = [];
-                updateScreen(null); 
-                saveData(true);      
+                const defaultData = getDefaultData();
+                updateScreen(defaultData);
+                saveDataSync(currentDocId); // Cria o documento no banco
             }
         });
     }
 
+    // --- SALVAMENTO SÍNCRONO PARA TROCAS ---
+    async function saveDataSync(targetId) {
+        const data = captureScreenData();
+        try {
+            await setDoc(doc(db, "gastos_namorada", targetId), data);
+            console.log("Salvo com sucesso no ID:", targetId);
+        } catch(e) {
+            console.error("Erro ao salvar:", e);
+            alert("Erro ao salvar dados. Verifique sua conexão.");
+        }
+    }
+
+    // --- SALVAMENTO AUTOMÁTICO (DEBOUNCE) ---
+    window.calculateAndSchedule = () => {
+        calculateAll();
+        if (isReceiving) return;
+        document.getElementById('syncStatus').innerText = "...";
+        clearTimeout(saveTimer);
+        saveTimer = setTimeout(() => saveDataSync(currentDocId), 1000);
+    }
+
+    function captureScreenData() {
+        const data = { 
+            salary: document.getElementById('salary').value, 
+            emergency: document.getElementById('emergencyFund').value, 
+            interTotal: document.getElementById('interTotalBill').value, 
+            paidDebtors: window.paidDebtors, 
+            main: [], inter: [] 
+        };
+        
+        // Captura Gastos Fixos
+        document.querySelectorAll('#mainTable tbody tr').forEach(tr => {
+            const inputs = tr.querySelectorAll('input');
+            data.main.push({ 
+                icon: tr.querySelector('.icon-select').value, 
+                name: inputs[0].value, desc: inputs[1].value, inst: inputs[2].value, value: inputs[3].value, 
+                isMine: inputs[4].checked, locked: inputs[3].hasAttribute('readonly'), id: inputs[3].id || null 
+            }); 
+        });
+
+        // Captura Inter
+        document.querySelectorAll('#interTable tbody tr').forEach(tr => {
+            const i = tr.querySelectorAll('input');
+            data.inter.push({ name: i[0].value, desc: i[1].value, inst: i[2].value, value: i[3].value });
+        });
+        
+        return data;
+    }
+
     function updateScreen(data) {
-        // Se estiver digitando, não atualiza a tela para não perder foco
+        // Se estiver digitando, não atualiza (exceto se for carga inicial isReceiving)
         const activeEl = document.activeElement;
-        const isTyping = activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'SELECT');
-        if (isTyping) return;
+        if (!isReceiving && activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'SELECT')) return;
 
         if (!data) data = getDefaultData();
-        if (data.inter === undefined) data.inter = []; 
+        if (!data.inter) data.inter = []; 
 
+        // Limpeza de IDs antigos e garantia de padrões
         if (data.main) {
-             const bannedIds = ['nubank_auto', 'c6_auto', 'itau_auto', 'bb_auto', 'mp_auto', 'passai_auto'];
+             const bannedIds = ['nubank_auto', 'c6_auto', 'itau_auto', 'bb_auto'];
              data.main = data.main.filter(item => !bannedIds.includes(item.id));
 
-             if (!data.main.some(i => i.id === 'inter_auto')) {
-                 data.main.unshift({ icon: '💳', name: 'Meu Inter', value: 0, isMine: true, locked: true, id: 'inter_auto' });
-             }
-             if (!data.main.some(i => i.name === 'Fatura Igor')) {
-                 data.main.push({ icon: '👱', name: 'Fatura Igor', value: 0, isMine: true });
-             }
-             if (!data.main.some(i => i.name === 'Fatura Lucas')) {
-                 data.main.push({ icon: '🧔', name: 'Fatura Lucas', value: 0, isMine: true });
-             }
+             const ensureItem = (id, icon, name) => {
+                 if (!data.main.some(i => (id ? i.id === id : i.name === name))) {
+                     data.main.unshift({ icon, name, value: 0, isMine: true, locked: !!id, id: id || null });
+                 }
+             };
+             ensureItem(null, '🧔', 'Fatura Lucas');
+             ensureItem(null, '👱', 'Fatura Igor');
+             ensureItem('inter_auto', '💳', 'Meu Inter');
         }
 
         document.getElementById('salary').value = data.salary || 0;
@@ -485,8 +431,7 @@
 
     function getDefaultData() {
         return {
-            salary: 2271.27, 
-            emergency: 0, interTotal: 0,
+            salary: 2271.27, emergency: 0, interTotal: 0,
             main: [
                 { icon: '💳', name: 'Meu Inter', value: 0, isMine: true, locked: true, id: 'inter_auto' },
                 { icon: '👱', name: 'Fatura Igor', value: 0, isMine: true },
@@ -506,12 +451,30 @@
     function renderTable(id, list, type) {
         const tbody = document.querySelector(`#${id} tbody`);
         tbody.innerHTML = "";
-        list.forEach(item => { if (type === 'main') addMainRowHTML(tbody, item); else addSplitRowHTML(tbody, item); });
+        list.forEach(item => { 
+            const tr = document.createElement("tr");
+            if (type === 'main') {
+                let opts = window.iconsList.map(i => `<option value="${i}" ${i === item.icon ? 'selected' : ''}>${i}</option>`).join('');
+                const locked = item.locked ? 'readonly style="background:#fce7f3; color:#999"' : '';
+                const del = item.locked ? '' : `<button class="btn-del" onclick="removeRow(this)">×</button>`;
+                tr.innerHTML = `<td><select class="icon-select" onchange="calculateAndSchedule()">${opts}</select></td><td><input type="text" class="td-input" value="${item.name}" ${locked} oninput="calculateAndSchedule()"></td><td><input type="text" class="td-input" value="${item.desc || ''}" placeholder="Detalhe" oninput="calculateAndSchedule()"></td><td><input type="text" class="td-input" value="${item.inst || ''}" placeholder="1/10" style="text-align:center" oninput="calculateAndSchedule()"></td><td><input type="number" class="td-input val-input" value="${item.value}" step="0.01" id="${item.id || ''}" ${locked} oninput="calculateAndSchedule()"></td><td style="text-align:center"><input type="checkbox" ${item.isMine ? 'checked' : ''} onchange="calculateAndSchedule()"></td><td>${del}</td>`;
+            } else {
+                tr.innerHTML = `<td><input type="text" class="td-input split-name" value="${item.name}" placeholder="Nome" oninput="calculateAndSchedule()"></td><td><input type="text" class="td-input" value="${item.desc}" placeholder="Item" oninput="calculateAndSchedule()"></td><td><input type="text" class="td-input split-inst" value="${item.inst || ''}" placeholder="1/10" oninput="updateBar(this); calculateAndSchedule()"><div class="prog-bar"><div class="prog-fill" style="width:0%"></div></div></td><td><input type="number" class="td-input val-input split-val" value="${item.value}" step="0.01" oninput="calculateAndSchedule()"></td><td><button class="btn-del" onclick="removeRow(this)">×</button></td>`;
+            }
+            tbody.appendChild(tr);
+            if(type !== 'main' && item.inst) updateBar(tr.querySelector('.split-inst'));
+        });
     }
+
+    window.addMainRow = () => { const tbody = document.querySelector("#mainTable tbody"); const tr=document.createElement("tr"); let opts=window.iconsList.map(i=>`<option value="${i}">${i}</option>`).join(''); tr.innerHTML=`<td><select class="icon-select" onchange="calculateAndSchedule()">${opts}</select></td><td><input type="text" class="td-input" oninput="calculateAndSchedule()"></td><td><input type="text" class="td-input" placeholder="Detalhe" oninput="calculateAndSchedule()"></td><td><input type="text" class="td-input" placeholder="1/10" style="text-align:center" oninput="calculateAndSchedule()"></td><td><input type="number" class="td-input val-input" value="0" step="0.01" oninput="calculateAndSchedule()"></td><td style="text-align:center"><input type="checkbox" checked onchange="calculateAndSchedule()"></td><td><button class="btn-del" onclick="removeRow(this)">×</button></td>`; tbody.appendChild(tr); calculateAndSchedule(); }
+    window.addSplitRow = (id) => { const tbody = document.querySelector(`#${id} tbody`); const tr=document.createElement("tr"); tr.innerHTML=`<td><input type="text" class="td-input split-name" placeholder="Nome" oninput="calculateAndSchedule()"></td><td><input type="text" class="td-input" placeholder="Item" oninput="calculateAndSchedule()"></td><td><input type="text" class="td-input split-inst" placeholder="1/10" oninput="updateBar(this); calculateAndSchedule()"><div class="prog-bar"><div class="prog-fill" style="width:0%"></div></div></td><td><input type="number" class="td-input val-input split-val" value="0" step="0.01" oninput="calculateAndSchedule()"></td><td><button class="btn-del" onclick="removeRow(this)">×</button></td>`; tbody.appendChild(tr); calculateAndSchedule(); }
+    
+    window.removeRow = (btn) => { btn.closest('tr').remove(); calculateAndSchedule(); }
+    window.updateBar = (input) => { const val = input.value; const bar = input.nextElementSibling.querySelector('.prog-fill'); if(val.includes('/')) { const [cur, tot] = val.split('/').map(Number); if(tot > 0) bar.style.width = Math.min((cur/tot)*100, 100) + '%'; } else bar.style.width = '0%'; }
+    window.togglePaid = (name) => { const idx = window.paidDebtors.indexOf(name); if (idx > -1) window.paidDebtors.splice(idx, 1); else window.paidDebtors.push(name); calculateAndSchedule(); }
 
     window.calculateAll = function() {
         const inter = processCard('interTable', 'interTotalBill', 'interMyShareDisplay', 'inter_auto');
-
         let totalExpenses = 0; let myRealExpenses = 0; let fixedSum = 0;
         const emergency = parseFloat(document.getElementById('emergencyFund').value) || 0;
         totalExpenses += emergency;
@@ -520,40 +483,18 @@
             const val = parseFloat(tr.querySelector('.val-input').value) || 0;
             const isMine = tr.querySelector('input[type="checkbox"]').checked;
             const isCardAuto = tr.querySelector('.val-input').hasAttribute('readonly'); 
-            
             totalExpenses += val;
             if (isMine) myRealExpenses += val;
             if (!isCardAuto) fixedSum += val; 
         });
 
         const salary = parseFloat(document.getElementById('salary').value) || 0;
-        document.getElementById('totalExpenses').innerText = fmt(totalExpenses);
-        document.getElementById('remaining').innerText = fmt(salary - totalExpenses);
-        document.getElementById('myRealExpenses').innerText = fmt(myRealExpenses);
+        document.getElementById('totalExpenses').innerText = totalExpenses.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+        document.getElementById('remaining').innerText = (salary - totalExpenses).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+        document.getElementById('myRealExpenses').innerText = myRealExpenses.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
 
-        updateDebtors({ ...inter.debtors }, {}, {}, {});
-        
-        const cardsTotal = inter.myShare;
-        updateChart(fixedSum, cardsTotal, emergency, salary - totalExpenses);
-    }
-
-    function updateChart(fixed, cards, emerg, rest) {
-        const ctx = document.getElementById('expenseChart').getContext('2d');
-        if (chartInstance) chartInstance.destroy();
-        if (rest < 0) rest = 0;
-
-        chartInstance = new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: ['Fixos/Dívidas', 'Cartão Inter', 'Reserva', 'Livre'],
-                datasets: [{
-                    data: [fixed, cards, emerg, rest],
-                    backgroundColor: ['#db2777', '#f59e0b', '#9333ea', '#10b981'],
-                    borderWidth: 0
-                }]
-            },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
-        });
+        updateDebtors({ ...inter.debtors });
+        updateChart(fixedSum, inter.myShare, emergency, salary - totalExpenses);
     }
 
     function processCard(tableId, totalId, displayId, autoInputId) {
@@ -574,47 +515,14 @@
             }
         });
         const myShare = totalBill - othersSum;
-        document.getElementById(displayId).innerText = fmt(myShare);
+        document.getElementById(displayId).innerText = myShare.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
         const autoInput = document.getElementById(autoInputId);
         if (autoInput) autoInput.value = myShare.toFixed(2);
         return { debtors, myShare };
     }
 
-    window.addMainRow = () => { addMainRowHTML(document.querySelector("#mainTable tbody"), {icon:'💸',name:'',value:'',isMine:true}); calculateAndSchedule(); }
-    window.addSplitRow = (id) => { addSplitRowHTML(document.querySelector(`#${id} tbody`), {name:'',desc:'',inst:'',value:''}); calculateAndSchedule(); }
-    
-    function addMainRowHTML(tbody, item) {
-        const tr = document.createElement("tr");
-        let opts = window.iconsList.map(i => `<option value="${i}" ${i === item.icon ? 'selected' : ''}>${i}</option>`).join('');
-        const locked = item.locked ? 'readonly style="background:#fce7f3; color:#999"' : '';
-        const del = item.locked ? '' : `<button class="btn-del" onclick="removeRow(this)">×</button>`;
-        
-        tr.innerHTML = `
-            <td><select class="icon-select" onchange="calculateAndSchedule()">${opts}</select></td>
-            <td><input type="text" class="td-input" value="${item.name}" ${locked} oninput="calculateAndSchedule()"></td>
-            <td><input type="text" class="td-input" value="${item.desc || ''}" placeholder="Detalhe" oninput="calculateAndSchedule()"></td>
-            <td><input type="text" class="td-input" value="${item.inst || ''}" placeholder="1/10" style="text-align:center" oninput="calculateAndSchedule()"></td>
-            <td><input type="number" class="td-input val-input" value="${item.value}" step="0.01" id="${item.id || ''}" ${locked} oninput="calculateAndSchedule()"></td>
-            <td style="text-align:center"><input type="checkbox" ${item.isMine ? 'checked' : ''} onchange="calculateAndSchedule()"></td>
-            <td>${del}</td>
-        `;
-        tbody.appendChild(tr);
-    }
-
-    function addSplitRowHTML(tbody, item) {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `<td><input type="text" class="td-input split-name" value="${item.name}" placeholder="Nome" oninput="calculateAndSchedule()"></td><td><input type="text" class="td-input" value="${item.desc}" placeholder="Item" oninput="calculateAndSchedule()"></td><td><input type="text" class="td-input split-inst" value="${item.inst || ''}" placeholder="1/10" oninput="updateBar(this); calculateAndSchedule()"><div class="prog-bar"><div class="prog-fill" style="width:0%"></div></div></td><td><input type="number" class="td-input val-input split-val" value="${item.value}" step="0.01" oninput="calculateAndSchedule()"></td><td><button class="btn-del" onclick="removeRow(this)">×</button></td>`;
-        tbody.appendChild(tr);
-        if(item.inst) updateBar(tr.querySelector('.split-inst'));
-    }
-    window.removeRow = (btn) => { btn.closest('tr').remove(); calculateAndSchedule(); }
-    window.updateBar = (input) => { const val = input.value; const bar = input.nextElementSibling.querySelector('.prog-fill'); if(val.includes('/')) { const [cur, tot] = val.split('/').map(Number); if(tot > 0) bar.style.width = Math.min((cur/tot)*100, 100) + '%'; } else bar.style.width = '0%'; }
-    window.togglePaid = (name) => { const idx = window.paidDebtors.indexOf(name); if (idx > -1) window.paidDebtors.splice(idx, 1); else window.paidDebtors.push(name); calculateAndSchedule(); }
-    
-    function updateDebtors(d1, d2, d3, d4) {
+    function updateDebtors(all) {
         const list = document.getElementById('debtorsList'); list.innerHTML = "";
-        const all = {}; const merge = (s) => { for (let k in s) { if (!all[k]) all[k] = {...s[k]}; else { all[k].total += s[k].total; all[k].future += s[k].future; } } };
-        merge(d1); merge(d2); merge(d3); merge(d4);
         let tr = 0; let r = 0;
         if (Object.keys(all).length === 0) list.innerHTML = "<div style='color:#999; width:100%; text-align:center'>Ninguém deve nada.</div>";
         else {
@@ -622,55 +530,51 @@
                 const p = all[k]; const isPaid = window.paidDebtors.includes(p.name);
                 if (isPaid) r += p.total; else tr += p.total;
                 const div = document.createElement('div'); div.className = `debt-item ${isPaid ? 'is-paid' : ''}`;
-                div.innerHTML = `<div class="d-head"><div class="d-name">${p.name}</div><div class="pay-check ${isPaid ? 'checked' : ''}" onclick="togglePaid('${p.name}')">${isPaid ? '✔' : ''}</div></div><div class="d-status">${isPaid ? 'PAGO' : 'PENDENTE'}</div><div class="d-val">${fmt(p.total)}</div><div class="d-fut">${p.future > 0 ? `+ ${fmt(p.future)} fut.` : 'Quitado'}</div>`;
+                div.innerHTML = `<div class="d-head"><div class="d-name">${p.name}</div><div class="pay-check ${isPaid ? 'checked' : ''}" onclick="togglePaid('${p.name}')">${isPaid ? '✔' : ''}</div></div><div class="d-status">${isPaid ? 'PAGO' : 'PENDENTE'}</div><div class="d-val">${p.total.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}</div>`;
                 list.appendChild(div);
             }
         }
-        document.getElementById('totalToReceive').innerText = fmt(tr); document.getElementById('totalReceived').innerText = fmt(r);
+        document.getElementById('totalToReceive').innerText = tr.toLocaleString('pt-BR',{style:'currency',currency:'BRL'}); 
+        document.getElementById('totalReceived').innerText = r.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
     }
-    
-    function fmt(n) { return n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); }
-    window.calculateAndSchedule = () => { calculateAll(); if (isReceiving) return; document.getElementById('syncStatus').innerText = "..."; clearTimeout(saveTimer); saveTimer = setTimeout(() => saveData(), 1000); }
-    
-    // --- FUNÇÃO DE SALVAMENTO CORRIGIDA (RECEBE ID OPCIONAL) ---
-    async function saveData(force = false, specificId = null) {
-        // Se estamos mudando de mês, usamos o ID específico (o antigo). Se não, usa o atual.
-        const targetId = specificId || currentDocId; 
 
-        if ((isReceiving && !force) || !targetId) return;
-        
-        const data = { 
-            salary: document.getElementById('salary').value, 
-            emergency: document.getElementById('emergencyFund').value, 
-            interTotal: document.getElementById('interTotalBill').value, 
-            paidDebtors: window.paidDebtors, 
-            main: [], inter: [] 
-        };
-        
-        document.querySelectorAll('#mainTable tbody tr').forEach(tr => {
-            const inputs = tr.querySelectorAll('input');
-            data.main.push({ 
-                icon: tr.querySelector('.icon-select').value, 
-                name: inputs[0].value, 
-                desc: inputs[1].value, 
-                inst: inputs[2].value, 
-                value: inputs[3].value, 
-                isMine: inputs[4].checked, 
-                locked: inputs[3].hasAttribute('readonly'), 
-                id: inputs[3].id || null 
-            }); 
+    function updateChart(fixed, cards, emerg, rest) {
+        const ctx = document.getElementById('expenseChart').getContext('2d');
+        if (chartInstance) chartInstance.destroy();
+        if (rest < 0) rest = 0;
+        chartInstance = new Chart(ctx, {
+            type: 'doughnut',
+            data: { labels: ['Fixos', 'Inter', 'Reserva', 'Livre'], datasets: [{ data: [fixed, cards, emerg, rest], backgroundColor: ['#db2777', '#f59e0b', '#9333ea', '#10b981'], borderWidth: 0 }] },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
         });
+    }
 
-        const sc = (id, arr) => { document.querySelectorAll(`#${id} tbody tr`).forEach(tr => { const i = tr.querySelectorAll('input'); arr.push({ name: i[0].value, desc: i[1].value, inst: i[2].value, value: i[3].value }); }); };
-        sc('interTable', data.inter);
+    window.resetMonthDefault = async function() {
+        if(!confirm("Tem certeza? Isso APAGA tudo deste mês.")) return;
+        saveDataSync(currentDocId); // Salva vazio/padrão
+        location.reload(); // Recarrega para garantir
+    }
+
+    window.copyPreviousMonth = async function() {
+        if(!confirm("Importar dados do mês anterior?")) return;
+        const parts = currentDocId.split('-');
+        let year = parseInt(parts[0]);
+        let month = parseInt(parts[1]);
+        month--; if (month === 0) { month = 12; year--; }
+        const prevId = `${year}-${String(month).padStart(2, '0')}`;
         
-        try { 
-            await setDoc(doc(db, "gastos_namorada", targetId), data); 
-            document.getElementById('syncStatus').innerHTML = '<span style="color:#db2777">☁ Salvo</span>'; 
-        } catch (e) { 
-            console.error(e); 
-            document.getElementById('syncStatus').innerText = "Erro Save"; 
-        }
+        try {
+            const docSnap = await getDoc(doc(db, "gastos_namorada", prevId));
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                data.paidDebtors = [];
+                // Incrementa parcelas
+                const inc = (arr) => arr.forEach(i => { if(i.inst && i.inst.includes('/')){ let [c,t]=i.inst.split('/'); if(c<t) i.inst=`${parseInt(c)+1}/${t}`; } });
+                if(data.main) inc(data.main); if(data.inter) inc(data.inter);
+                updateScreen(data);
+                setTimeout(() => saveDataSync(currentDocId), 500);
+            } else { alert("Mês anterior vazio."); }
+        } catch(e) { alert("Erro ao copiar."); }
     }
 </script>
 </body>
