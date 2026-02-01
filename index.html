@@ -8,10 +8,10 @@
     <meta name="apple-mobile-web-app-title" content="Finanças Dani">
     <title>Finanças da Dani 💖</title>
 
-    <link rel="icon" type="image/png" sizes="32x32" href="icone.png?v=9">
-    <link rel="icon" type="image/png" sizes="16x16" href="icone.png?v=9">
-    <link rel="shortcut icon" href="icone.png?v=9">
-    <link rel="apple-touch-icon" href="icone.png?v=9">
+    <link rel="icon" type="image/png" sizes="32x32" href="icone.png?v=10">
+    <link rel="icon" type="image/png" sizes="16x16" href="icone.png?v=10">
+    <link rel="shortcut icon" href="icone.png?v=10">
+    <link rel="apple-touch-icon" href="icone.png?v=10">
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -54,6 +54,17 @@
         }
         .btn-unlock:hover { background: var(--primary-dark); }
         .error-msg { color: var(--danger); font-size: 0.85rem; margin-top: 10px; min-height: 20px; font-weight: 600; }
+
+        /* LOADING OVERLAY */
+        #loadingOverlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9);
+            z-index: 9000; display: none; align-items: center; justify-content: center; flex-direction: column;
+        }
+        .spinner {
+            width: 40px; height: 40px; border: 4px solid #fecdd3; border-top: 4px solid var(--primary);
+            border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         /* APP CONTENT */
         #appContent { display: none; padding: 15px; padding-bottom: 100px; max-width: 1000px; margin: 0 auto; }
@@ -152,6 +163,11 @@
 </head>
 <body>
 
+<div id="loadingOverlay">
+    <div class="spinner"></div>
+    <div style="font-weight:600; color:#db2777">Carregando...</div>
+</div>
+
 <div id="lockScreen">
     <div class="lock-box">
         <div style="font-size:3rem; margin-bottom:10px;">💖</div>
@@ -237,7 +253,7 @@
     
     <button class="btn-reset" onclick="resetMonthDefault()">⚠️ RESETAR PADRÃO DO MÊS (Correção)</button>
 
-    <footer>Versão 9.0 - Dani 💖</footer>
+    <footer>Versão 10.0 - Dani 💖</footer>
 </div>
 
 <script type="module">
@@ -306,28 +322,36 @@
         loadMonthData(defaultDate);
     }
 
-    // --- CORREÇÃO DE VAZAMENTO DE DADOS ---
+    // --- CORREÇÃO DE VAZAMENTO DE DADOS ENTRE MESES ---
     window.changeMonth = async function() {
         const picker = document.getElementById('monthPicker');
         const newDate = picker.value;
         
-        if (!newDate) return;
+        if (!newDate || newDate === currentDocId) return;
 
-        // 1. CANCELA SALVAMENTO PENDENTE
+        // 1. Bloqueia a interface
+        document.getElementById('loadingOverlay').style.display = 'flex';
+
+        // 2. Cancela qualquer salvamento pendente
         clearTimeout(saveTimer);
 
-        // 2. FORÇA SALVAMENTO DO MÊS ATUAL (VELHO) ANTES DE TROCAR
+        // 3. Salva os dados do Mês Atual (se houver) no ID Atual explicitamente
         if (currentDocId && !isReceiving) {
-            console.log("Salvando mês anterior:", currentDocId);
-            await saveData(true); // true = force save synchronous
+            await saveData(true, currentDocId); // Salva no ID VELHO
         }
 
-        // 3. LIMPA TELA VISUALMENTE PARA NÃO MISTURAR
+        // 4. Limpa a tela visualmente para não misturar
+        if (unsubscribe) unsubscribe();
+        unsubscribe = null;
         clearScreen();
 
-        // 4. ATUALIZA MEMÓRIA E CARREGA O NOVO
+        // 5. Atualiza o ID e carrega o novo
         localStorage.setItem('last_month_viewed', newDate);
-        loadMonthData(newDate);
+        
+        // Pequeno delay para garantir que o Firebase processou
+        setTimeout(() => {
+            loadMonthData(newDate);
+        }, 300);
     }
 
     function clearScreen() {
@@ -354,7 +378,7 @@
     }
 
     window.copyPreviousMonth = async function() {
-        if(!confirm("Importar dados do mês anterior? As parcelas (ex: 1/10) serão atualizadas automaticamente!")) return;
+        if(!confirm("Importar dados do mês anterior?")) return;
 
         const parts = currentDocId.split('-');
         let year = parseInt(parts[0]);
@@ -391,7 +415,7 @@
                 setTimeout(() => { 
                     isReceiving = false; 
                     saveData(true); 
-                    alert("Dados importados e parcelas atualizadas!");
+                    alert("Dados importados!");
                 }, 500);
             } else {
                 alert("Sem dados em " + prevId);
@@ -402,12 +426,14 @@
     function loadMonthData(dateString) {
         currentDocId = dateString;
         document.getElementById('syncStatus').innerText = "Carregando...";
-        if (unsubscribe) unsubscribe();
         
         const docRef = doc(db, "gastos_namorada", currentDocId);
 
         unsubscribe = onSnapshot(docRef, { includeMetadataChanges: true }, (docSnap) => {
+            document.getElementById('loadingOverlay').style.display = 'none'; // Libera a tela
+
             if (docSnap.exists()) {
+                // Se for mudança local (minha digitação), ignora o update da tela
                 if (docSnap.metadata.hasPendingWrites) return; 
 
                 isReceiving = true;
@@ -425,12 +451,10 @@
     }
 
     function updateScreen(data) {
+        // Se estiver digitando, não atualiza a tela para não perder foco
         const activeEl = document.activeElement;
         const isTyping = activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'SELECT');
-        if (isTyping) {
-            console.log("Ignorando update externo (digitando)");
-            return;
-        }
+        if (isTyping) return;
 
         if (!data) data = getDefaultData();
         if (data.inter === undefined) data.inter = []; 
@@ -608,8 +632,13 @@
     function fmt(n) { return n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); }
     window.calculateAndSchedule = () => { calculateAll(); if (isReceiving) return; document.getElementById('syncStatus').innerText = "..."; clearTimeout(saveTimer); saveTimer = setTimeout(() => saveData(), 1000); }
     
-    async function saveData(force = false) {
-        if (isReceiving && !force) return;
+    // --- FUNÇÃO DE SALVAMENTO CORRIGIDA (RECEBE ID OPCIONAL) ---
+    async function saveData(force = false, specificId = null) {
+        // Se estamos mudando de mês, usamos o ID específico (o antigo). Se não, usa o atual.
+        const targetId = specificId || currentDocId; 
+
+        if ((isReceiving && !force) || !targetId) return;
+        
         const data = { 
             salary: document.getElementById('salary').value, 
             emergency: document.getElementById('emergencyFund').value, 
@@ -634,7 +663,14 @@
 
         const sc = (id, arr) => { document.querySelectorAll(`#${id} tbody tr`).forEach(tr => { const i = tr.querySelectorAll('input'); arr.push({ name: i[0].value, desc: i[1].value, inst: i[2].value, value: i[3].value }); }); };
         sc('interTable', data.inter);
-        try { await setDoc(doc(db, "gastos_namorada", currentDocId), data); document.getElementById('syncStatus').innerHTML = '<span style="color:#db2777">☁ Salvo</span>'; } catch (e) { console.error(e); document.getElementById('syncStatus').innerText = "Erro Save"; }
+        
+        try { 
+            await setDoc(doc(db, "gastos_namorada", targetId), data); 
+            document.getElementById('syncStatus').innerHTML = '<span style="color:#db2777">☁ Salvo</span>'; 
+        } catch (e) { 
+            console.error(e); 
+            document.getElementById('syncStatus').innerText = "Erro Save"; 
+        }
     }
 </script>
 </body>
