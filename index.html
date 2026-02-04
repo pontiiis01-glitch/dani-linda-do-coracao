@@ -6,18 +6,19 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Finanças Dani">
-    <title>Finanças da Dani 💖</title>
+    <title>Finanças da Dani 14.0 💖</title>
 
-    <link rel="icon" type="image/png" sizes="32x32" href="icone.png?v=12">
-    <link rel="icon" type="image/png" sizes="16x16" href="icone.png?v=12">
-    <link rel="shortcut icon" href="icone.png?v=12">
-    <link rel="apple-touch-icon" href="icone.png?v=12">
+    <link rel="icon" type="image/png" sizes="32x32" href="icone.png?v=14">
+    <link rel="icon" type="image/png" sizes="16x16" href="icone.png?v=14">
+    <link rel="shortcut icon" href="icone.png?v=14">
+    <link rel="apple-touch-icon" href="icone.png?v=14">
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
         :root {
+            /* TEMA ROSE (Personalizado para Ela) */
             --primary: #db2777; 
             --primary-dark: #be185d; 
             --bg-body: #fff1f2; 
@@ -25,10 +26,12 @@
             --text-main: #0f172a; 
             --text-muted: #64748b; 
             --border: #fecdd3;
+            
             --success: #10b981; 
+            --success-dark: #059669;
             --danger: #ef4444; 
             --warning: #f59e0b; 
-            --inter: #ff7a00; 
+            --inter: #ff7a00; /* Laranja Inter */
         }
 
         body { font-family: 'Inter', sans-serif; background-color: var(--bg-body); color: var(--text-main); margin: 0; padding: 0; }
@@ -80,10 +83,14 @@
         input[type="month"] { border: none; font-family: 'Inter', sans-serif; font-size: 1rem; font-weight: 600; background: transparent; cursor: pointer; color: var(--primary-dark); }
         input[type="month"]:focus { outline: none; }
         
-        .btn-copy {
-            background: var(--primary); color: white; border: none; padding: 8px 15px; border-radius: 50px;
+        /* BOTÕES DE AÇÃO */
+        .btn-action {
+            color: white; border: none; padding: 8px 15px; border-radius: 50px;
             font-size: 0.85rem; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 5px;
         }
+        .btn-copy { background: #3b82f6; } 
+        .btn-export { background: #10b981; }
+
         .btn-logout-simple {
             background: #fee2e2; color: #b91c1c; border: none; padding: 8px 12px; border-radius: 50px;
             font-size: 0.8rem; cursor: pointer; font-weight: 600;
@@ -103,11 +110,16 @@
         .stat-input { width: 100%; font-size: 1.3rem; font-weight: 800; border: none; border-bottom: 2px dashed #fecdd3; background: transparent; padding: 0; color: inherit; }
         .stat-input:focus { outline: none; border-bottom-color: var(--primary); }
 
+        /* BARRA DE CONSUMO (NOVIDADE V14) */
+        .salary-bar-bg { width: 100%; height: 6px; background: #e2e8f0; border-radius: 3px; margin-top: 10px; overflow: hidden; }
+        .salary-bar-fill { height: 100%; width: 0%; transition: width 0.5s, background-color 0.5s; background: var(--success); }
+
         /* CHART */
         .chart-container { background: #fff; padding: 20px; border-radius: 20px; margin-bottom: 30px; border: 1px solid var(--border); height: 300px; display: flex; justify-content: center; }
 
         /* CORES */
         .c-salary .val, .c-salary input { color: var(--success); }
+        .c-income .val { color: var(--success-dark); }
         .c-total .val { color: var(--danger); }
         .c-rest .val { color: var(--primary); }
         .c-mine .val { color: var(--warning); }
@@ -131,9 +143,15 @@
         .prog-fill { height: 100%; background: var(--primary); width: 0%; transition: width 0.3s; }
         
         .btn-add { width: 100%; padding: 12px; margin-top: 15px; border-radius: 10px; border: 2px dashed #fda4af; background: #fff1f2; color: var(--primary); font-weight: 600; cursor: pointer; transition: 0.2s; }
-        .btn-add:hover { background: #ffe4e6; }
         .btn-del { border: none; background: transparent; color: var(--danger); font-size: 1.2rem; cursor: pointer; }
         .btn-reset { width: 100%; padding: 15px; margin-top: 30px; border-radius: 10px; background: #fef2f2; border: 1px solid #ef4444; color: #ef4444; font-weight: 700; cursor: pointer; }
+
+        /* ESTILO RENDA EXTRA */
+        .style-income { border-left: 5px solid var(--success-dark); } .style-income h2 { color: var(--success-dark); }
+
+        /* ESTILOS CARTÕES */
+        .style-inter { border-left: 5px solid var(--inter); } .style-inter h2 { color: var(--inter); }
+        .bill-input { width: 100px; text-align: right; font-weight: bold; padding: 5px; border-radius: 5px; border: 1px solid #fecdd3; color: var(--primary-dark); }
 
         /* DEVEDORES */
         .debt-summary { display: flex; gap: 15px; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #f1f5f9; }
@@ -153,11 +171,6 @@
         .pay-check.checked { background: #22c55e; border-color: #22c55e; color: #fff; }
 
         footer { text-align: center; font-size: 0.8rem; color: var(--text-muted); margin-top: 40px; }
-
-        /* ESTILOS CARTÕES */
-        .style-inter { border-left: 5px solid var(--inter); } .style-inter h2 { color: var(--inter); }
-        
-        .bill-input { width: 100px; text-align: right; font-weight: bold; padding: 5px; border-radius: 5px; border: 1px solid #fecdd3; color: var(--primary-dark); }
     </style>
 </head>
 <body>
@@ -185,8 +198,11 @@
                 <span>📅</span>
                 <input type="month" id="monthPicker" onchange="changeMonthSafe()">
             </div>
-            <button class="btn-copy" onclick="copyPreviousMonth()">
-                <span>🔄</span> Copiar Mês Anterior
+            <button class="btn-action btn-copy" onclick="copyPreviousMonth()">
+                <span>🔄</span> Copiar Mês
+            </button>
+            <button class="btn-action btn-export" onclick="exportToCSV()">
+                <span>📥</span> Excel
             </button>
             <button class="btn-logout-simple" onclick="lockApp()">Bloquear</button>
         </div>
@@ -194,14 +210,32 @@
     </header>
 
     <div class="dashboard-grid">
-        <div class="card-stat c-salary"><h3>Salário</h3><input type="number" id="salary" class="stat-input" value="0" oninput="calculateAll()"></div>
-        <div class="card-stat c-emerg"><h3>🚨 Reserva</h3><input type="number" id="emergencyFund" class="stat-input" value="0" oninput="calculateAll()"></div>
+        <div class="card-stat c-salary">
+            <h3>Salário Base</h3>
+            <input type="number" id="salary" class="stat-input" value="0" oninput="calculateAndSchedule()">
+            <div class="salary-bar-bg" title="Comprometimento da Renda"><div class="salary-bar-fill" id="salaryBar"></div></div>
+        </div>
+        <div class="card-stat c-income"><h3>Renda Extra</h3><div class="val" id="extraIncomeTotal">R$ 0,00</div></div>
+        <div class="card-stat c-emerg"><h3>🚨 Reserva</h3><input type="number" id="emergencyFund" class="stat-input" value="0" oninput="calculateAndSchedule()"></div>
         <div class="card-stat c-total"><h3>Total Saídas</h3><div class="val" id="totalExpenses">R$ 0,00</div></div>
-        <div class="card-stat c-rest"><h3>Livre para Gastar</h3><div class="val" id="remaining">R$ 0,00</div></div>
+        <div class="card-stat c-rest"><h3>Livre (Total)</h3><div class="val" id="remaining">R$ 0,00</div></div>
         <div class="card-stat c-mine"><h3>Meu Custo Real</h3><div class="val" id="myRealExpenses">R$ 0,00</div></div>
     </div>
 
     <div class="chart-container"><canvas id="expenseChart"></canvas></div>
+
+    <div class="section style-income">
+        <div class="sec-header"><h2>💰 Entradas Extras <small style="font-size:0.7rem; font-weight:normal;">(Férias, 13º...)</small></h2></div>
+        <div class="sec-body">
+            <div class="table-wrap">
+                <table id="incomeTable">
+                    <thead><tr><th>Descrição</th><th style="width:120px">Valor (R$)</th><th style="width:30px"></th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <button class="btn-add" style="border-color:var(--success-dark); color:var(--success-dark); background:#f0fdf4;" onclick="addIncomeRow()">+ Adicionar Renda Extra</button>
+        </div>
+    </div>
 
     <div class="section">
         <div class="sec-header"><h2>📉 Gastos Fixos & Dívidas</h2></div>
@@ -217,7 +251,7 @@
     </div>
 
     <div class="section style-inter">
-        <div class="sec-header"><h2>💳 Meu Cartão Inter</h2><div><small>FATURA:</small><input type="number" id="interTotalBill" class="bill-input" oninput="calculateAll()"></div></div>
+        <div class="sec-header"><h2>💳 Meu Cartão Inter</h2><div><small>FATURA:</small><input type="number" id="interTotalBill" class="bill-input" oninput="calculateAndSchedule()"></div></div>
         <div class="sec-body">
             <div class="table-wrap"><table id="interTable"><thead><tr><th>Quem</th><th>Desc.</th><th>Parc.</th><th>Valor</th><th></th></tr></thead><tbody></tbody></table></div>
             <button class="btn-add" onclick="addSplitRow('interTable')">+ Adicionar no Inter</button>
@@ -236,8 +270,8 @@
         </div>
     </div>
     
-    <button class="btn-reset" onclick="resetMonthDefault()">⚠️ RESETAR ESTE MÊS (Não Bloqueia)</button>
-    <footer>Versão 12.0 - Dani 💖</footer>
+    <button class="btn-reset" onclick="resetMonthDefault()">⚠️ RESETAR ESTE MÊS (Correção)</button>
+    <footer>Versão 14.0 - Dani 💖</footer>
 </div>
 
 <script type="module">
@@ -288,6 +322,41 @@
         loadMonthData(defaultDate);
     }
 
+    // EXPORTAR EXCEL (ADAPTADO PARA DANI)
+    window.exportToCSV = function() {
+        if (!currentDocId) return;
+        const rows = [["Categoria", "Item", "Descricao", "Parcela", "Valor", "Meu?"]];
+        
+        // Rendas
+        rows.push(["Entrada", "Salário Base", "", "", document.getElementById('salary').value, "SIM"]);
+        document.querySelectorAll('#incomeTable tbody tr').forEach(tr => {
+            const inputs = tr.querySelectorAll('input');
+            rows.push(["Renda Extra", inputs[0].value, "", "", inputs[1].value, "SIM"]);
+        });
+
+        // Gastos Fixos
+        document.querySelectorAll('#mainTable tbody tr').forEach(tr => {
+            const inputs = tr.querySelectorAll('input');
+            // Ordem inputs: 0:Nome, 1:Desc, 2:Inst, 3:Valor, 4:Check
+            rows.push(["Gasto Fixo", inputs[0].value, inputs[1].value, inputs[2].value, inputs[3].value, inputs[4].checked ? "SIM" : "NAO"]);
+        });
+
+        // Cartão Inter
+        document.querySelectorAll('#interTable tbody tr').forEach(tr => {
+            const inputs = tr.querySelectorAll('input');
+            rows.push(["Cartão Inter", inputs[0].value, inputs[1].value, inputs[2].value, inputs[3].value, "SIM"]);
+        });
+
+        let csvContent = "data:text/csv;charset=utf-8,\uFEFF" + rows.map(e => e.join(";")).join("\n");
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", `Financas_Dani_${currentDocId}.csv`);
+        document.body.appendChild(link);
+        link.click();
+    }
+
+    // --- TROCA SEGURA (MANTEVE A CORREÇÃO DE DADOS) ---
     window.changeMonthSafe = async function() {
         const newDate = document.getElementById('monthPicker').value;
         if (!newDate || newDate === currentDocId) return;
@@ -297,9 +366,7 @@
         if (unsubscribe) unsubscribe();
         clearTimeout(saveTimer);
 
-        if (currentDocId && !isReceiving) {
-            await saveDataSync(currentDocId); 
-        }
+        if (currentDocId && !isReceiving) await saveDataSync(currentDocId); 
 
         clearScreen();
         localStorage.setItem('last_month_viewed', newDate);
@@ -309,34 +376,19 @@
     function clearScreen() {
         document.querySelector("#mainTable tbody").innerHTML = "";
         document.querySelector("#interTable tbody").innerHTML = "";
+        document.querySelector("#incomeTable tbody").innerHTML = "";
         document.getElementById('salary').value = 0;
         document.getElementById('totalExpenses').innerText = "R$ 0,00";
     }
 
-    // --- CORREÇÃO DO BOTÃO DE RESET (SEM RELOAD) ---
     window.resetMonthDefault = async function() {
         if(!confirm("Tem certeza? Isso vai limpar todos os dados deste mês agora.")) return;
-        
-        // 1. Para tudo
         clearTimeout(saveTimer);
-        isReceiving = true; // Bloqueia temporariamente
-
-        // 2. Prepara dados zerados
+        isReceiving = true; 
         const defaultData = getDefaultData();
-
-        // 3. Atualiza tela NA HORA
         updateScreen(defaultData);
-
-        // 4. Salva no banco
-        try {
-            await setDoc(doc(db, "gastos_namorada", currentDocId), defaultData);
-            alert("Mês resetado com sucesso!");
-        } catch(e) {
-            console.error(e);
-            alert("Erro ao resetar no banco, mas a tela foi limpa.");
-        }
-
-        // 5. Libera
+        try { await setDoc(doc(db, "gastos_namorada", currentDocId), defaultData); alert("Mês resetado!"); } 
+        catch(e) { console.error(e); }
         isReceiving = false;
     }
 
@@ -369,7 +421,6 @@
         
         unsubscribe = onSnapshot(docRef, { includeMetadataChanges: true }, (docSnap) => {
             document.getElementById('loadingOverlay').style.display = 'none';
-            
             if (docSnap.exists()) {
                 if (docSnap.metadata.hasPendingWrites) return; 
                 isReceiving = true;
@@ -389,9 +440,7 @@
 
     async function saveDataSync(targetId) {
         const data = captureScreenData();
-        try {
-            await setDoc(doc(db, "gastos_namorada", targetId), data);
-        } catch(e) { console.error("Erro save sync", e); }
+        try { await setDoc(doc(db, "gastos_namorada", targetId), data); } catch(e) { console.error("Erro save sync", e); }
     }
 
     window.calculateAndSchedule = () => {
@@ -408,8 +457,14 @@
             emergency: document.getElementById('emergencyFund').value, 
             interTotal: document.getElementById('interTotalBill').value, 
             paidDebtors: window.paidDebtors, 
-            main: [], inter: [] 
+            main: [], inter: [], extraIncome: []
         };
+        // Renda Extra
+        document.querySelectorAll('#incomeTable tbody tr').forEach(tr => {
+            const inputs = tr.querySelectorAll('input');
+            data.extraIncome.push({ desc: inputs[0].value, value: inputs[1].value });
+        });
+        // Fixos
         document.querySelectorAll('#mainTable tbody tr').forEach(tr => {
             const inputs = tr.querySelectorAll('input');
             data.main.push({ 
@@ -418,6 +473,7 @@
                 isMine: inputs[4].checked, locked: inputs[3].hasAttribute('readonly'), id: inputs[3].id || null 
             }); 
         });
+        // Inter
         document.querySelectorAll('#interTable tbody tr').forEach(tr => {
             const i = tr.querySelectorAll('input');
             data.inter.push({ name: i[0].value, desc: i[1].value, inst: i[2].value, value: i[3].value });
@@ -431,9 +487,11 @@
 
         if (!data) data = getDefaultData();
         if (!data.inter) data.inter = []; 
+        if (!data.extraIncome) data.extraIncome = [];
 
+        // Limpeza e Garantia
         if (data.main) {
-             const bannedIds = ['nubank_auto', 'c6_auto', 'itau_auto', 'bb_auto'];
+             const bannedIds = ['nubank_auto', 'c6_auto', 'itau_auto', 'bb_auto', 'mp_auto', 'passai_auto'];
              data.main = data.main.filter(item => !bannedIds.includes(item.id));
 
              const ensureItem = (id, icon, name) => {
@@ -450,8 +508,9 @@
         document.getElementById('emergencyFund').value = data.emergency || 0;
         document.getElementById('interTotalBill').value = data.interTotal || 0;
 
-        renderTable('mainTable', data.main || [], 'main');
-        renderTable('interTable', data.inter || [], 'split');
+        renderTable('incomeTable', data.extraIncome, 'income');
+        renderTable('mainTable', data.main, 'main');
+        renderTable('interTable', data.inter, 'split');
         calculateAll();
     }
 
@@ -470,31 +529,47 @@
                 { icon: '💅', name: 'Unhas', value: 100.00, isMine: true },
                 { icon: '✍️', name: 'Concursos', value: 100.00, isMine: true },
                 { icon: '🛒', name: 'Supermercado', value: 100.00, isMine: true }
-            ], inter: [], paidDebtors: []
+            ], inter: [], extraIncome: [], paidDebtors: []
         };
     }
+
+    // TABLE BUILDERS
+    window.addMainRow = () => { addMainRowHTML(document.querySelector("#mainTable tbody"), {icon:'💸',name:'',value:'',isMine:true}); calculateAndSchedule(); }
+    window.addSplitRow = (id) => { addSplitRowHTML(document.querySelector(`#${id} tbody`), {name:'',desc:'',inst:'',value:''}); calculateAndSchedule(); }
+    window.addIncomeRow = () => { addIncomeRowHTML(document.querySelector("#incomeTable tbody"), {desc:'', value:''}); calculateAndSchedule(); }
 
     function renderTable(id, list, type) {
         const tbody = document.querySelector(`#${id} tbody`);
         tbody.innerHTML = "";
         list.forEach(item => { 
-            const tr = document.createElement("tr");
-            if (type === 'main') {
-                let opts = window.iconsList.map(i => `<option value="${i}" ${i === item.icon ? 'selected' : ''}>${i}</option>`).join('');
-                const locked = item.locked ? 'readonly style="background:#fce7f3; color:#999"' : '';
-                const del = item.locked ? '' : `<button class="btn-del" onclick="removeRow(this)">×</button>`;
-                tr.innerHTML = `<td><select class="icon-select" onchange="calculateAndSchedule()">${opts}</select></td><td><input type="text" class="td-input" value="${item.name}" ${locked} oninput="calculateAndSchedule()"></td><td><input type="text" class="td-input" value="${item.desc || ''}" placeholder="Detalhe" oninput="calculateAndSchedule()"></td><td><input type="text" class="td-input" value="${item.inst || ''}" placeholder="1/10" style="text-align:center" oninput="calculateAndSchedule()"></td><td><input type="number" class="td-input val-input" value="${item.value}" step="0.01" id="${item.id || ''}" ${locked} oninput="calculateAndSchedule()"></td><td style="text-align:center"><input type="checkbox" ${item.isMine ? 'checked' : ''} onchange="calculateAndSchedule()"></td><td>${del}</td>`;
-            } else {
-                tr.innerHTML = `<td><input type="text" class="td-input split-name" value="${item.name}" placeholder="Nome" oninput="calculateAndSchedule()"></td><td><input type="text" class="td-input" value="${item.desc}" placeholder="Item" oninput="calculateAndSchedule()"></td><td><input type="text" class="td-input split-inst" value="${item.inst || ''}" placeholder="1/10" oninput="updateBar(this); calculateAndSchedule()"><div class="prog-bar"><div class="prog-fill" style="width:0%"></div></div></td><td><input type="number" class="td-input val-input split-val" value="${item.value}" step="0.01" oninput="calculateAndSchedule()"></td><td><button class="btn-del" onclick="removeRow(this)">×</button></td>`;
-            }
-            tbody.appendChild(tr);
-            if(type !== 'main' && item.inst) updateBar(tr.querySelector('.split-inst'));
+            if (type === 'main') addMainRowHTML(tbody, item);
+            else if (type === 'income') addIncomeRowHTML(tbody, item);
+            else addSplitRowHTML(tbody, item);
         });
     }
-
-    window.addMainRow = () => { const tbody = document.querySelector("#mainTable tbody"); const tr=document.createElement("tr"); let opts=window.iconsList.map(i=>`<option value="${i}">${i}</option>`).join(''); tr.innerHTML=`<td><select class="icon-select" onchange="calculateAndSchedule()">${opts}</select></td><td><input type="text" class="td-input" oninput="calculateAndSchedule()"></td><td><input type="text" class="td-input" placeholder="Detalhe" oninput="calculateAndSchedule()"></td><td><input type="text" class="td-input" placeholder="1/10" style="text-align:center" oninput="calculateAndSchedule()"></td><td><input type="number" class="td-input val-input" value="0" step="0.01" oninput="calculateAndSchedule()"></td><td style="text-align:center"><input type="checkbox" checked onchange="calculateAndSchedule()"></td><td><button class="btn-del" onclick="removeRow(this)">×</button></td>`; tbody.appendChild(tr); calculateAndSchedule(); }
-    window.addSplitRow = (id) => { const tbody = document.querySelector(`#${id} tbody`); const tr=document.createElement("tr"); tr.innerHTML=`<td><input type="text" class="td-input split-name" placeholder="Nome" oninput="calculateAndSchedule()"></td><td><input type="text" class="td-input" placeholder="Item" oninput="calculateAndSchedule()"></td><td><input type="text" class="td-input split-inst" placeholder="1/10" oninput="updateBar(this); calculateAndSchedule()"><div class="prog-bar"><div class="prog-fill" style="width:0%"></div></div></td><td><input type="number" class="td-input val-input split-val" value="0" step="0.01" oninput="calculateAndSchedule()"></td><td><button class="btn-del" onclick="removeRow(this)">×</button></td>`; tbody.appendChild(tr); calculateAndSchedule(); }
     
+    function addMainRowHTML(tbody, item) {
+        const tr = document.createElement("tr");
+        let opts = window.iconsList.map(i => `<option value="${i}" ${i === item.icon ? 'selected' : ''}>${i}</option>`).join('');
+        const locked = item.locked ? 'readonly style="background:#fce7f3; color:#999"' : '';
+        const del = item.locked ? '' : `<button class="btn-del" onclick="removeRow(this)">×</button>`;
+        tr.innerHTML = `<td><select class="icon-select" onchange="calculateAndSchedule()">${opts}</select></td><td><input type="text" class="td-input" value="${item.name}" ${locked} oninput="calculateAndSchedule()"></td><td><input type="text" class="td-input" value="${item.desc || ''}" placeholder="Detalhe" oninput="calculateAndSchedule()"></td><td><input type="text" class="td-input" value="${item.inst || ''}" placeholder="1/10" style="text-align:center" oninput="calculateAndSchedule()"></td><td><input type="number" class="td-input val-input" value="${item.value}" step="0.01" id="${item.id || ''}" ${locked} oninput="calculateAndSchedule()"></td><td style="text-align:center"><input type="checkbox" ${item.isMine ? 'checked' : ''} onchange="calculateAndSchedule()"></td><td>${del}</td>`;
+        tbody.appendChild(tr);
+    }
+
+    function addSplitRowHTML(tbody, item) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td><input type="text" class="td-input split-name" value="${item.name}" placeholder="Nome" oninput="calculateAndSchedule()"></td><td><input type="text" class="td-input" value="${item.desc}" placeholder="Item" oninput="calculateAndSchedule()"></td><td><input type="text" class="td-input split-inst" value="${item.inst || ''}" placeholder="1/10" oninput="updateBar(this); calculateAndSchedule()"><div class="prog-bar"><div class="prog-fill" style="width:0%"></div></div></td><td><input type="number" class="td-input val-input split-val" value="${item.value}" step="0.01" oninput="calculateAndSchedule()"></td><td><button class="btn-del" onclick="removeRow(this)">×</button></td>`;
+        tbody.appendChild(tr);
+        if(item.inst) updateBar(tr.querySelector('.split-inst'));
+    }
+
+    function addIncomeRowHTML(tbody, item) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td><input type="text" class="td-input" value="${item.desc}" placeholder="Ex: Diária" oninput="calculateAndSchedule()"></td><td><input type="number" class="td-input val-input" value="${item.value}" step="0.01" oninput="calculateAndSchedule()"></td><td><button class="btn-del" onclick="removeRow(this)">×</button></td>`;
+        tbody.appendChild(tr);
+    }
+
     window.removeRow = (btn) => { btn.closest('tr').remove(); calculateAndSchedule(); }
     window.updateBar = (input) => { const val = input.value; const bar = input.nextElementSibling.querySelector('.prog-fill'); if(val.includes('/')) { const [cur, tot] = val.split('/').map(Number); if(tot > 0) bar.style.width = Math.min((cur/tot)*100, 100) + '%'; } else bar.style.width = '0%'; }
     window.togglePaid = (name) => { const idx = window.paidDebtors.indexOf(name); if (idx > -1) window.paidDebtors.splice(idx, 1); else window.paidDebtors.push(name); calculateAndSchedule(); }
@@ -514,13 +589,28 @@
             if (!isCardAuto) fixedSum += val; 
         });
 
+        // Renda Extra + Salário
+        let extraIncomeTotal = 0;
+        document.querySelectorAll('#incomeTable tbody tr').forEach(tr => { extraIncomeTotal += parseFloat(tr.querySelector('.val-input').value) || 0; });
+        document.getElementById('extraIncomeTotal').innerText = extraIncomeTotal.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+
         const salary = parseFloat(document.getElementById('salary').value) || 0;
+        const totalIncome = salary + extraIncomeTotal;
+
         document.getElementById('totalExpenses').innerText = totalExpenses.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
-        document.getElementById('remaining').innerText = (salary - totalExpenses).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+        document.getElementById('remaining').innerText = (totalIncome - totalExpenses).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
         document.getElementById('myRealExpenses').innerText = myRealExpenses.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
 
+        // Barra de Consumo
+        const percent = totalIncome > 0 ? (totalExpenses / totalIncome) * 100 : 0;
+        const bar = document.getElementById('salaryBar');
+        bar.style.width = Math.min(percent, 100) + "%";
+        if(percent < 50) bar.style.backgroundColor = "#10b981"; 
+        else if(percent < 85) bar.style.backgroundColor = "#f59e0b"; 
+        else bar.style.backgroundColor = "#ef4444"; 
+
         updateDebtors({ ...inter.debtors });
-        updateChart(fixedSum, inter.myShare, emergency, salary - totalExpenses);
+        updateChart(fixedSum, inter.myShare, emergency, totalIncome - totalExpenses);
     }
 
     function processCard(tableId, totalId, displayId, autoInputId) {
