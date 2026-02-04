@@ -6,12 +6,12 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Finanças Dani">
-    <title>Finanças da Dani 16.0 💖</title>
+    <title>Finanças da Dani 17.0 💖</title>
 
-    <link rel="icon" type="image/png" sizes="32x32" href="icone.png?v=16">
-    <link rel="icon" type="image/png" sizes="16x16" href="icone.png?v=16">
-    <link rel="shortcut icon" href="icone.png?v=16">
-    <link rel="apple-touch-icon" href="icone.png?v=16">
+    <link rel="icon" type="image/png" sizes="32x32" href="icone.png?v=17">
+    <link rel="icon" type="image/png" sizes="16x16" href="icone.png?v=17">
+    <link rel="shortcut icon" href="icone.png?v=17">
+    <link rel="apple-touch-icon" href="icone.png?v=17">
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -25,6 +25,7 @@
             --text-main: #0f172a; 
             --text-muted: #64748b; 
             --border: #fecdd3;
+            
             --success: #10b981; 
             --success-dark: #059669;
             --danger: #ef4444; 
@@ -144,6 +145,7 @@
         
         .bill-input { width: 100px; text-align: right; font-weight: bold; padding: 5px; border-radius: 5px; border: 1px solid #fecdd3; color: var(--primary-dark); }
 
+        /* DEVEDORES */
         .debt-summary { display: flex; gap: 15px; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #f1f5f9; }
         .ds-box { flex: 1; text-align: center; }
         .ds-lbl { font-size: 0.7rem; text-transform: uppercase; color: #64748b; font-weight: 600; }
@@ -241,20 +243,18 @@
     </div>
 
     <div class="section style-igor">
-        <div class="sec-header"><h2>💳 Cartão do Igor</h2><div><small>FATURA:</small><input type="number" id="igorTotalBill" class="bill-input" readonly></div></div>
+        <div class="sec-header"><h2>💳 Cartão do Igor</h2><div><small>Total a Pagar:</small> <strong id="igorTotalDisplay" style="font-size:1.2rem;">R$ 0,00</strong></div></div>
         <div class="sec-body">
-            <div class="table-wrap"><table id="igorTable"><thead><tr><th>Quem</th><th>Desc.</th><th>Parc.</th><th>Valor</th><th></th></tr></thead><tbody></tbody></table></div>
-            <button class="btn-add" onclick="addSplitRow('igorTable')">+ Adicionar no Igor</button>
-            <div style="text-align:right; margin-top:10px; color:var(--igor)">Minha parte: <strong id="igorMyShareDisplay">R$ 0,00</strong></div>
+            <div class="table-wrap"><table id="igorTable"><thead><tr><th>Descrição</th><th>Detalhe</th><th>Parc.</th><th>Valor</th><th></th></tr></thead><tbody></tbody></table></div>
+            <button class="btn-add" onclick="addSplitRow('igorTable')">+ Adicionar Item no Igor</button>
         </div>
     </div>
 
     <div class="section style-lucas">
-        <div class="sec-header"><h2>💳 Cartão do Lucas</h2><div><small>FATURA:</small><input type="number" id="lucasTotalBill" class="bill-input" readonly></div></div>
+        <div class="sec-header"><h2>💳 Cartão do Lucas</h2><div><small>Total a Pagar:</small> <strong id="lucasTotalDisplay" style="font-size:1.2rem;">R$ 0,00</strong></div></div>
         <div class="sec-body">
-            <div class="table-wrap"><table id="lucasTable"><thead><tr><th>Quem</th><th>Desc.</th><th>Parc.</th><th>Valor</th><th></th></tr></thead><tbody></tbody></table></div>
-            <button class="btn-add" onclick="addSplitRow('lucasTable')">+ Adicionar no Lucas</button>
-            <div style="text-align:right; margin-top:10px; color:var(--lucas)">Minha parte: <strong id="lucasMyShareDisplay">R$ 0,00</strong></div>
+            <div class="table-wrap"><table id="lucasTable"><thead><tr><th>Descrição</th><th>Detalhe</th><th>Parc.</th><th>Valor</th><th></th></tr></thead><tbody></tbody></table></div>
+            <button class="btn-add" onclick="addSplitRow('lucasTable')">+ Adicionar Item no Lucas</button>
         </div>
     </div>
 
@@ -267,19 +267,19 @@
         </div>
     </div>
 
-    <div class="section" style="border-left: 5px solid #10b981;">
-        <div class="sec-header"><h2 style="color:#059669">💰 A Receber</h2></div>
+    <div class="section" style="border-left: 5px solid #ef4444;">
+        <div class="sec-header"><h2 style="color:#b91c1c">💸 Dívidas (A Pagar)</h2></div>
         <div class="sec-body">
             <div class="debt-summary">
-                <div class="ds-box"><div class="ds-lbl">A Receber</div><div class="ds-val" id="totalToReceive" style="color:#ef4444">R$ 0,00</div></div>
-                <div class="ds-box" style="border-left:1px solid #e2e8f0"><div class="ds-lbl">Já Recebido</div><div class="ds-val" id="totalReceived" style="color:#22c55e">R$ 0,00</div></div>
+                <div class="ds-box"><div class="ds-lbl">Falta Pagar</div><div class="ds-val" id="totalToReceive" style="color:#ef4444">R$ 0,00</div></div>
+                <div class="ds-box" style="border-left:1px solid #e2e8f0"><div class="ds-lbl">Já Pago</div><div class="ds-val" id="totalReceived" style="color:#22c55e">R$ 0,00</div></div>
             </div>
             <div id="debtorsList" class="debt-list"></div>
         </div>
     </div>
     
     <button class="btn-reset" onclick="resetMonthDefault()">⚠️ RESETAR ESTE MÊS (Correção)</button>
-    <footer>Versão 16.0 - Dani 💖</footer>
+    <footer>Versão 17.0 - Dani 💖</footer>
 </div>
 
 <script type="module">
@@ -300,7 +300,7 @@
     const db = getFirestore(app);
     const SENHA_DO_SISTEMA = "0805"; 
 
-    window.isEditing = false; // TRAVA DE DIGITAÇÃO
+    window.isEditing = false; 
 
     window.checkPassword = function() {
         const input = document.getElementById('passInput').value;
@@ -332,7 +332,6 @@
         loadMonthData(defaultDate);
     }
 
-    // EXPORTAR EXCEL
     window.exportToCSV = function() {
         if (!currentDocId) return;
         const rows = [["Categoria", "Item", "Descricao", "Parcela", "Valor", "Meu?"]];
@@ -432,7 +431,6 @@
             if (docSnap.exists()) {
                 if (docSnap.metadata.hasPendingWrites) return; 
                 
-                // SE O USUÁRIO ESTIVER DIGITANDO, NÃO ATUALIZA A TELA
                 if (window.isEditing) {
                     console.log("Ignorando update externo pois o usuário está editando.");
                     return; 
@@ -471,20 +469,15 @@
             salary: document.getElementById('salary').value, 
             emergency: document.getElementById('emergencyFund').value, 
             interTotal: document.getElementById('interTotalBill').value, 
-            igorTotal: document.getElementById('igorTotalBill').value, 
-            lucasTotal: document.getElementById('lucasTotalBill').value, 
             paidDebtors: window.paidDebtors, 
             main: [], inter: [], igor: [], lucas: [], extraIncome: []
         };
-        // Renda Extra
         document.querySelectorAll('#incomeTable tbody tr').forEach(tr => {
             const inputs = tr.querySelectorAll('input');
             data.extraIncome.push({ desc: inputs[0].value, value: inputs[1].value });
         });
-        // Fixos
         document.querySelectorAll('#mainTable tbody tr').forEach(tr => {
             const inputs = tr.querySelectorAll('input');
-            // NÃO salva as faturas automáticas para não duplicar
             const name = inputs[0].value;
             if (name !== 'Fatura Cartão Igor' && name !== 'Fatura Cartão Lucas') {
                 data.main.push({ 
@@ -494,7 +487,6 @@
                 }); 
             }
         });
-        // Cartões
         const scrape = (tid, arr) => {
             document.querySelectorAll(`#${tid} tbody tr`).forEach(tr => {
                 const i = tr.querySelectorAll('input');
@@ -517,10 +509,14 @@
         if (!data.lucas) data.lucas = []; 
         if (!data.extraIncome) data.extraIncome = [];
 
+        if (data.main) {
+             const bannedNames = ['Fatura Cartão Igor', 'Fatura Cartão Lucas', 'Cartão Igor', 'Cartão Lucas']; 
+             data.main = data.main.filter(item => !bannedNames.includes(item.name));
+        }
+
         document.getElementById('salary').value = data.salary || 0;
         document.getElementById('emergencyFund').value = data.emergency || 0;
         document.getElementById('interTotalBill').value = data.interTotal || 0;
-        // Igor e Lucas são calculados automaticamente, não precisa setar valor aqui
 
         renderTable('incomeTable', data.extraIncome, 'income');
         renderTable('mainTable', data.main, 'main');
@@ -528,13 +524,12 @@
         renderTable('igorTable', data.igor, 'split');
         renderTable('lucasTable', data.lucas, 'split');
         
-        // Garante cálculo inicial para exibir as faturas
         calculateAll();
     }
 
     function getDefaultData() {
         return {
-            salary: 2271.27, emergency: 0, interTotal: 0, igorTotal: 0, lucasTotal: 0,
+            salary: 2271.27, emergency: 0, interTotal: 0,
             main: [
                 { icon: '📶', name: 'Claro Flex', value: 40.00, isMine: true },
                 { icon: '🏰', name: 'Disney', value: 11.71, isMine: true },
@@ -547,7 +542,6 @@
         };
     }
 
-    // TABLE BUILDERS
     window.addMainRow = () => { addMainRowHTML(document.querySelector("#mainTable tbody"), {icon:'💸',name:'',value:'',isMine:true}); calculateAndSchedule(); }
     window.addSplitRow = (id) => { addSplitRowHTML(document.querySelector(`#${id} tbody`), {name:'',desc:'',inst:'',value:''}); calculateAndSchedule(); }
     window.addIncomeRow = () => { addIncomeRowHTML(document.querySelector("#incomeTable tbody"), {desc:'', value:''}); calculateAndSchedule(); }
@@ -567,7 +561,6 @@
         if (isAuto) tr.style.backgroundColor = "#f3f4f6";
         let opts = window.iconsList.map(i => `<option value="${i}" ${i === item.icon ? 'selected' : ''}>${i}</option>`).join('');
         
-        // Se for automático, trava tudo
         const locked = item.locked || isAuto ? 'readonly style="background:transparent; color:#666"' : 'onfocus="window.isEditing=true" onblur="window.isEditing=false"';
         const del = item.locked || isAuto ? '' : `<button class="btn-del" onclick="removeRow(this)">×</button>`;
         const check = item.isMine ? 'checked' : '';
@@ -602,15 +595,29 @@
     window.updateBar = (input) => { const val = input.value; const bar = input.nextElementSibling.querySelector('.prog-fill'); if(val.includes('/')) { const [cur, tot] = val.split('/').map(Number); if(tot > 0) bar.style.width = Math.min((cur/tot)*100, 100) + '%'; } else bar.style.width = '0%'; }
     window.togglePaid = (name) => { const idx = window.paidDebtors.indexOf(name); if (idx > -1) window.paidDebtors.splice(idx, 1); else window.paidDebtors.push(name); calculateAndSchedule(); }
 
-    window.calculateAll = function() {
-        // 1. Calcula Cartões Primeiro
-        const inter = processCard('interTable', 'interTotalBill', 'interMyShareDisplay', 'inter_auto');
-        const igor = processCard('igorTable', 'igorTotalBill', 'igorMyShareDisplay', 'igor_auto');
-        const lucas = processCard('lucasTable', 'lucasTotalBill', 'lucasMyShareDisplay', 'lucas_auto');
+    // CÁLCULO DE SOMA SIMPLES (IGOR E LUCAS)
+    function calculateSimpleSum(tableId) {
+        let sum = 0;
+        document.querySelectorAll(`#${tableId} tbody tr`).forEach(tr => {
+            sum += parseFloat(tr.querySelector('.split-val').value) || 0;
+        });
+        return sum;
+    }
 
-        // 2. Injeta/Atualiza Faturas no Main Table (Visual Apenas)
-        updateAutoRow('Fatura Cartão Igor', igor.myShare, '💳');
-        updateAutoRow('Fatura Cartão Lucas', lucas.myShare, '💳');
+    window.calculateAll = function() {
+        // 1. Calcula somas simples de Igor e Lucas
+        const igorSum = calculateSimpleSum('igorTable');
+        document.getElementById('igorTotalDisplay').innerText = fmt(igorSum);
+
+        const lucasSum = calculateSimpleSum('lucasTable');
+        document.getElementById('lucasTotalDisplay').innerText = fmt(lucasSum);
+
+        // 2. Calcula Inter
+        const inter = processCard('interTable', 'interTotalBill', 'interMyShareDisplay', 'inter_auto');
+
+        // 3. Atualiza Faturas Automáticas na Tabela Principal
+        updateAutoRow('Fatura Cartão Igor', igorSum, '💳');
+        updateAutoRow('Fatura Cartão Lucas', lucasSum, '💳');
 
         let totalExpenses = 0; let myRealExpenses = 0; let fixedSum = 0;
         const emergency = parseFloat(document.getElementById('emergencyFund').value) || 0;
@@ -625,7 +632,7 @@
             if (!isCardAuto) fixedSum += val; 
         });
 
-        // Renda Extra + Salário
+        // Renda
         let extraIncomeTotal = 0;
         document.querySelectorAll('#incomeTable tbody tr').forEach(tr => { extraIncomeTotal += parseFloat(tr.querySelector('.val-input').value) || 0; });
         document.getElementById('extraIncomeTotal').innerText = extraIncomeTotal.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
@@ -645,29 +652,29 @@
         else if(percent < 85) bar.style.backgroundColor = "#f59e0b"; 
         else bar.style.backgroundColor = "#ef4444"; 
 
-        updateDebtors({ ...inter.debtors, ...igor.debtors, ...lucas.debtors });
+        // Atualiza Dívidas (Invertido: A Pagar)
+        const debts = {};
+        if (igorSum > 0) debts['igor'] = { name: 'Igor', total: igorSum };
+        if (lucasSum > 0) debts['lucas'] = { name: 'Lucas', total: lucasSum };
         
-        // No gráfico, somamos todos os cartões na fatia laranja
-        const totalCards = inter.myShare + igor.myShare + lucas.myShare;
+        updateDebtors(debts);
+        
+        const totalCards = inter.myShare + igorSum + lucasSum;
         updateChart(fixedSum, totalCards, emergency, totalIncome - totalExpenses);
     }
 
-    // Função Mágica: Cria ou Atualiza a linha automática
     function updateAutoRow(name, value, icon) {
         const tbody = document.querySelector("#mainTable tbody");
         let found = false;
-        // Procura linha existente
         tbody.querySelectorAll('tr').forEach(tr => {
-            const inputName = tr.querySelector('input[type="text"]').value;
-            if (inputName === name) {
+            if (tr.querySelector('input[type="text"]').value === name) {
                 tr.querySelector('.val-input').value = value.toFixed(2);
                 found = true;
             }
         });
-        // Se não achou, cria no topo
-        if (!found) {
+        if (!found && value >= 0) { // Cria mesmo se for 0 para visualização
             const tr = document.createElement("tr");
-            tr.style.backgroundColor = "#f3f4f6"; // Cinza pra destacar
+            tr.style.backgroundColor = "#f3f4f6"; 
             tr.innerHTML = `
                 <td><select class="icon-select" disabled><option>${icon}</option></select></td>
                 <td><input type="text" class="td-input" value="${name}" readonly style="background:transparent; color:#666; font-weight:bold;"></td>
@@ -685,18 +692,8 @@
         const totalBill = parseFloat(document.getElementById(totalId).value) || 0;
         let othersSum = 0; let debtors = {};
         document.querySelectorAll(`#${tableId} tbody tr`).forEach(tr => {
-            const name = tr.querySelector('.split-name').value.trim();
             const val = parseFloat(tr.querySelector('.split-val').value) || 0;
-            const inst = tr.querySelector('.split-inst').value;
-            if (val > 0) {
-                othersSum += val;
-                if (name) {
-                    const key = name.toLowerCase();
-                    if (!debtors[key]) debtors[key] = { name: name, total: 0, future: 0 };
-                    debtors[key].total += val;
-                    if (inst.includes('/')) { const [cur, tot] = inst.split('/').map(Number); if (tot > cur) debtors[key].future += (tot - cur) * val; }
-                }
-            }
+            if (val > 0) othersSum += val;
         });
         const myShare = totalBill - othersSum;
         document.getElementById(displayId).innerText = myShare.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
@@ -705,14 +702,19 @@
 
     function updateDebtors(all) {
         const list = document.getElementById('debtorsList'); list.innerHTML = "";
-        let tr = 0; let r = 0;
-        if (Object.keys(all).length === 0) list.innerHTML = "<div style='color:#999; width:100%; text-align:center'>Ninguém deve nada.</div>";
+        let tr = 0; let r = 0; // tr = To Pay (Red), r = Paid (Green)
+        if (Object.keys(all).length === 0) list.innerHTML = "<div style='color:#999; width:100%; text-align:center'>Nenhuma dívida.</div>";
         else {
             for (let k in all) {
-                const p = all[k]; const isPaid = window.paidDebtors.includes(p.name);
+                const p = all[k]; 
+                const isPaid = window.paidDebtors.includes(p.name);
                 if (isPaid) r += p.total; else tr += p.total;
+                
                 const div = document.createElement('div'); div.className = `debt-item ${isPaid ? 'is-paid' : ''}`;
-                div.innerHTML = `<div class="d-head"><div class="d-name">${p.name}</div><div class="pay-check ${isPaid ? 'checked' : ''}" onclick="togglePaid('${p.name}')">${isPaid ? '✔' : ''}</div></div><div class="d-status">${isPaid ? 'PAGO' : 'PENDENTE'}</div><div class="d-val">${p.total.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}</div>`;
+                // LÓGICA INVERTIDA DE CORES PARA DÍVIDA
+                const statusColor = isPaid ? '#15803d' : '#ef4444'; // Verde se pago, Vermelho se deve
+                
+                div.innerHTML = `<div class="d-head"><div class="d-name">${p.name}</div><div class="pay-check ${isPaid ? 'checked' : ''}" onclick="togglePaid('${p.name}')">${isPaid ? '✔' : ''}</div></div><div class="d-status" style="color:${statusColor}">${isPaid ? 'PAGO' : 'FALTA PAGAR'}</div><div class="d-val">${p.total.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}</div>`;
                 list.appendChild(div);
             }
         }
@@ -730,6 +732,8 @@
             options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
         });
     }
+    
+    function fmt(n) { return n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); }
 </script>
 </body>
 </html>
