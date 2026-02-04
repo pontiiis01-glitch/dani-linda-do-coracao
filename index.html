@@ -6,12 +6,12 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Finanças Dani">
-    <title>Finanças da Dani 15.0 💖</title>
+    <title>Finanças da Dani 16.0 💖</title>
 
-    <link rel="icon" type="image/png" sizes="32x32" href="icone.png?v=15">
-    <link rel="icon" type="image/png" sizes="16x16" href="icone.png?v=15">
-    <link rel="shortcut icon" href="icone.png?v=15">
-    <link rel="apple-touch-icon" href="icone.png?v=15">
+    <link rel="icon" type="image/png" sizes="32x32" href="icone.png?v=16">
+    <link rel="icon" type="image/png" sizes="16x16" href="icone.png?v=16">
+    <link rel="shortcut icon" href="icone.png?v=16">
+    <link rel="apple-touch-icon" href="icone.png?v=16">
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -25,21 +25,17 @@
             --text-main: #0f172a; 
             --text-muted: #64748b; 
             --border: #fecdd3;
-            
             --success: #10b981; 
             --success-dark: #059669;
             --danger: #ef4444; 
             --warning: #f59e0b; 
-            
-            /* Cores dos Módulos */
-            --inter: #ff7a00; /* Laranja */
-            --igor: #2563eb;  /* Azul */
-            --lucas: #059669; /* Verde */
+            --inter: #ff7a00; 
+            --igor: #2563eb;  
+            --lucas: #059669; 
         }
 
         body { font-family: 'Inter', sans-serif; background-color: var(--bg-body); color: var(--text-main); margin: 0; padding: 0; }
         
-        /* LOADING */
         #loadingOverlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.95);
             z-index: 9999; display: none; align-items: center; justify-content: center; flex-direction: column;
@@ -50,7 +46,6 @@
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* TELA DE SENHA */
         #lockScreen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-body);
             display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9990;
@@ -72,7 +67,6 @@
         .btn-unlock:hover { background: var(--primary-dark); }
         .error-msg { color: var(--danger); font-size: 0.85rem; margin-top: 10px; min-height: 20px; font-weight: 600; }
 
-        /* APP CONTENT */
         #appContent { display: none; padding: 15px; padding-bottom: 100px; max-width: 1000px; margin: 0 auto; }
         
         header { display: flex; flex-direction: column; align-items: center; gap: 15px; margin-bottom: 20px; margin-top: 10px; }
@@ -100,7 +94,6 @@
 
         .sync-indicator { font-size: 0.75rem; font-weight: 600; padding: 4px 10px; border-radius: 20px; background: #fff; color: var(--text-muted); }
 
-        /* DASHBOARD */
         .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 30px; }
         .card-stat {
             background: var(--bg-card); padding: 15px; border-radius: 16px;
@@ -112,14 +105,11 @@
         .stat-input { width: 100%; font-size: 1.3rem; font-weight: 800; border: none; border-bottom: 2px dashed #fecdd3; background: transparent; padding: 0; color: inherit; }
         .stat-input:focus { outline: none; border-bottom-color: var(--primary); }
 
-        /* BARRA DE CONSUMO */
         .salary-bar-bg { width: 100%; height: 6px; background: #e2e8f0; border-radius: 3px; margin-top: 10px; overflow: hidden; }
         .salary-bar-fill { height: 100%; width: 0%; transition: width 0.5s, background-color 0.5s; background: var(--success); }
 
-        /* CHART */
         .chart-container { background: #fff; padding: 20px; border-radius: 20px; margin-bottom: 30px; border: 1px solid var(--border); height: 300px; display: flex; justify-content: center; }
 
-        /* CORES */
         .c-salary .val, .c-salary input { color: var(--success); }
         .c-income .val { color: var(--success-dark); }
         .c-total .val { color: var(--danger); }
@@ -127,7 +117,6 @@
         .c-mine .val { color: var(--warning); }
         .c-emerg .val, .c-emerg input { color: #9333ea; }
 
-        /* SEÇÕES & TABELAS */
         .section { background: var(--bg-card); border-radius: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); margin-bottom: 30px; border: 1px solid var(--border); overflow: hidden; }
         .sec-header { padding: 15px 20px; background: #fff; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
         .sec-header h2 { margin: 0; font-size: 1.1rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
@@ -148,17 +137,13 @@
         .btn-del { border: none; background: transparent; color: var(--danger); font-size: 1.2rem; cursor: pointer; }
         .btn-reset { width: 100%; padding: 15px; margin-top: 30px; border-radius: 10px; background: #fef2f2; border: 1px solid #ef4444; color: #ef4444; font-weight: 700; cursor: pointer; }
 
-        /* ESTILO RENDA EXTRA */
         .style-income { border-left: 5px solid var(--success-dark); } .style-income h2 { color: var(--success-dark); }
-
-        /* ESTILOS CARTÕES */
         .style-inter { border-left: 5px solid var(--inter); } .style-inter h2 { color: var(--inter); }
         .style-igor { border-left: 5px solid var(--igor); } .style-igor h2 { color: var(--igor); }
         .style-lucas { border-left: 5px solid var(--lucas); } .style-lucas h2 { color: var(--lucas); }
         
         .bill-input { width: 100px; text-align: right; font-weight: bold; padding: 5px; border-radius: 5px; border: 1px solid #fecdd3; color: var(--primary-dark); }
 
-        /* DEVEDORES */
         .debt-summary { display: flex; gap: 15px; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #f1f5f9; }
         .ds-box { flex: 1; text-align: center; }
         .ds-lbl { font-size: 0.7rem; text-transform: uppercase; color: #64748b; font-weight: 600; }
@@ -217,11 +202,11 @@
     <div class="dashboard-grid">
         <div class="card-stat c-salary">
             <h3>Salário Base</h3>
-            <input type="number" id="salary" class="stat-input" value="0" oninput="calculateAndSchedule()">
+            <input type="number" id="salary" class="stat-input" value="0" oninput="calculateAndSchedule()" onfocus="window.isEditing=true" onblur="window.isEditing=false">
             <div class="salary-bar-bg" title="Comprometimento da Renda"><div class="salary-bar-fill" id="salaryBar"></div></div>
         </div>
         <div class="card-stat c-income"><h3>Renda Extra</h3><div class="val" id="extraIncomeTotal">R$ 0,00</div></div>
-        <div class="card-stat c-emerg"><h3>🚨 Reserva</h3><input type="number" id="emergencyFund" class="stat-input" value="0" oninput="calculateAndSchedule()"></div>
+        <div class="card-stat c-emerg"><h3>🚨 Reserva</h3><input type="number" id="emergencyFund" class="stat-input" value="0" oninput="calculateAndSchedule()" onfocus="window.isEditing=true" onblur="window.isEditing=false"></div>
         <div class="card-stat c-total"><h3>Total Saídas</h3><div class="val" id="totalExpenses">R$ 0,00</div></div>
         <div class="card-stat c-rest"><h3>Livre (Total)</h3><div class="val" id="remaining">R$ 0,00</div></div>
         <div class="card-stat c-mine"><h3>Meu Custo Real</h3><div class="val" id="myRealExpenses">R$ 0,00</div></div>
@@ -230,7 +215,7 @@
     <div class="chart-container"><canvas id="expenseChart"></canvas></div>
 
     <div class="section style-income">
-        <div class="sec-header"><h2>💰 Entradas Extras <small style="font-size:0.7rem; font-weight:normal;">(Férias, 13º...)</small></h2></div>
+        <div class="sec-header"><h2>💰 Entradas Extras</h2></div>
         <div class="sec-body">
             <div class="table-wrap">
                 <table id="incomeTable">
@@ -256,7 +241,7 @@
     </div>
 
     <div class="section style-igor">
-        <div class="sec-header"><h2>💳 Cartão do Igor</h2><div><small>FATURA:</small><input type="number" id="igorTotalBill" class="bill-input" oninput="calculateAndSchedule()"></div></div>
+        <div class="sec-header"><h2>💳 Cartão do Igor</h2><div><small>FATURA:</small><input type="number" id="igorTotalBill" class="bill-input" readonly></div></div>
         <div class="sec-body">
             <div class="table-wrap"><table id="igorTable"><thead><tr><th>Quem</th><th>Desc.</th><th>Parc.</th><th>Valor</th><th></th></tr></thead><tbody></tbody></table></div>
             <button class="btn-add" onclick="addSplitRow('igorTable')">+ Adicionar no Igor</button>
@@ -265,7 +250,7 @@
     </div>
 
     <div class="section style-lucas">
-        <div class="sec-header"><h2>💳 Cartão do Lucas</h2><div><small>FATURA:</small><input type="number" id="lucasTotalBill" class="bill-input" oninput="calculateAndSchedule()"></div></div>
+        <div class="sec-header"><h2>💳 Cartão do Lucas</h2><div><small>FATURA:</small><input type="number" id="lucasTotalBill" class="bill-input" readonly></div></div>
         <div class="sec-body">
             <div class="table-wrap"><table id="lucasTable"><thead><tr><th>Quem</th><th>Desc.</th><th>Parc.</th><th>Valor</th><th></th></tr></thead><tbody></tbody></table></div>
             <button class="btn-add" onclick="addSplitRow('lucasTable')">+ Adicionar no Lucas</button>
@@ -274,7 +259,7 @@
     </div>
 
     <div class="section style-inter">
-        <div class="sec-header"><h2>💳 Meu Cartão Inter</h2><div><small>FATURA:</small><input type="number" id="interTotalBill" class="bill-input" oninput="calculateAndSchedule()"></div></div>
+        <div class="sec-header"><h2>💳 Meu Cartão Inter</h2><div><small>FATURA:</small><input type="number" id="interTotalBill" class="bill-input" oninput="calculateAndSchedule()" onfocus="window.isEditing=true" onblur="window.isEditing=false"></div></div>
         <div class="sec-body">
             <div class="table-wrap"><table id="interTable"><thead><tr><th>Quem</th><th>Desc.</th><th>Parc.</th><th>Valor</th><th></th></tr></thead><tbody></tbody></table></div>
             <button class="btn-add" onclick="addSplitRow('interTable')">+ Adicionar no Inter</button>
@@ -294,7 +279,7 @@
     </div>
     
     <button class="btn-reset" onclick="resetMonthDefault()">⚠️ RESETAR ESTE MÊS (Correção)</button>
-    <footer>Versão 15.0 - Dani 💖</footer>
+    <footer>Versão 16.0 - Dani 💖</footer>
 </div>
 
 <script type="module">
@@ -314,6 +299,8 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const SENHA_DO_SISTEMA = "0805"; 
+
+    window.isEditing = false; // TRAVA DE DIGITAÇÃO
 
     window.checkPassword = function() {
         const input = document.getElementById('passInput').value;
@@ -380,7 +367,6 @@
         link.click();
     }
 
-    // --- TROCA SEGURA ---
     window.changeMonthSafe = async function() {
         const newDate = document.getElementById('monthPicker').value;
         if (!newDate || newDate === currentDocId) return;
@@ -444,7 +430,14 @@
         unsubscribe = onSnapshot(docRef, { includeMetadataChanges: true }, (docSnap) => {
             document.getElementById('loadingOverlay').style.display = 'none';
             if (docSnap.exists()) {
-                if (docSnap.metadata.hasPendingWrites) return; // IGNORA ECO LOCAL
+                if (docSnap.metadata.hasPendingWrites) return; 
+                
+                // SE O USUÁRIO ESTIVER DIGITANDO, NÃO ATUALIZA A TELA
+                if (window.isEditing) {
+                    console.log("Ignorando update externo pois o usuário está editando.");
+                    return; 
+                }
+
                 isReceiving = true;
                 const data = docSnap.data();
                 window.paidDebtors = data.paidDebtors || [];
@@ -470,7 +463,7 @@
         if (isReceiving) return;
         document.getElementById('syncStatus').innerText = "...";
         clearTimeout(saveTimer);
-        saveTimer = setTimeout(() => saveDataSync(currentDocId), 1000); // 1s Delay
+        saveTimer = setTimeout(() => saveDataSync(currentDocId), 1000); 
     }
 
     function captureScreenData() {
@@ -491,11 +484,15 @@
         // Fixos
         document.querySelectorAll('#mainTable tbody tr').forEach(tr => {
             const inputs = tr.querySelectorAll('input');
-            data.main.push({ 
-                icon: tr.querySelector('.icon-select').value, 
-                name: inputs[0].value, desc: inputs[1].value, inst: inputs[2].value, value: inputs[3].value, 
-                isMine: inputs[4].checked, locked: inputs[3].hasAttribute('readonly'), id: inputs[3].id || null 
-            }); 
+            // NÃO salva as faturas automáticas para não duplicar
+            const name = inputs[0].value;
+            if (name !== 'Fatura Cartão Igor' && name !== 'Fatura Cartão Lucas') {
+                data.main.push({ 
+                    icon: tr.querySelector('.icon-select').value, 
+                    name: name, desc: inputs[1].value, inst: inputs[2].value, value: inputs[3].value, 
+                    isMine: inputs[4].checked, locked: inputs[3].hasAttribute('readonly'), id: inputs[3].id || null 
+                }); 
+            }
         });
         // Cartões
         const scrape = (tid, arr) => {
@@ -512,10 +509,7 @@
     }
 
     function updateScreen(data) {
-        // --- PROTEÇÃO DE FOCO ---
-        const activeEl = document.activeElement;
-        // Se estiver digitando, NÃO ATUALIZA A TELA (exceto carga inicial)
-        if (!isReceiving && activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'SELECT')) return;
+        if (window.isEditing) return;
 
         if (!data) data = getDefaultData();
         if (!data.inter) data.inter = []; 
@@ -523,23 +517,18 @@
         if (!data.lucas) data.lucas = []; 
         if (!data.extraIncome) data.extraIncome = [];
 
-        // Limpa faturas antigas dos fixos se existirem
-        if (data.main) {
-             const bannedNames = ['Fatura Igor', 'Fatura Lucas', 'Cartão Igor', 'Cartão Lucas']; 
-             data.main = data.main.filter(item => !bannedNames.includes(item.name));
-        }
-
         document.getElementById('salary').value = data.salary || 0;
         document.getElementById('emergencyFund').value = data.emergency || 0;
         document.getElementById('interTotalBill').value = data.interTotal || 0;
-        document.getElementById('igorTotalBill').value = data.igorTotal || 0;
-        document.getElementById('lucasTotalBill').value = data.lucasTotal || 0;
+        // Igor e Lucas são calculados automaticamente, não precisa setar valor aqui
 
         renderTable('incomeTable', data.extraIncome, 'income');
         renderTable('mainTable', data.main, 'main');
         renderTable('interTable', data.inter, 'split');
         renderTable('igorTable', data.igor, 'split');
         renderTable('lucasTable', data.lucas, 'split');
+        
+        // Garante cálculo inicial para exibir as faturas
         calculateAll();
     }
 
@@ -573,25 +562,39 @@
         });
     }
     
-    function addMainRowHTML(tbody, item) {
+    function addMainRowHTML(tbody, item, isAuto = false) {
         const tr = document.createElement("tr");
+        if (isAuto) tr.style.backgroundColor = "#f3f4f6";
         let opts = window.iconsList.map(i => `<option value="${i}" ${i === item.icon ? 'selected' : ''}>${i}</option>`).join('');
-        const locked = item.locked ? 'readonly style="background:#fce7f3; color:#999"' : '';
-        const del = item.locked ? '' : `<button class="btn-del" onclick="removeRow(this)">×</button>`;
-        tr.innerHTML = `<td><select class="icon-select" onchange="calculateAndSchedule()">${opts}</select></td><td><input type="text" class="td-input" value="${item.name}" ${locked} oninput="calculateAndSchedule()"></td><td><input type="text" class="td-input" value="${item.desc || ''}" placeholder="Detalhe" oninput="calculateAndSchedule()"></td><td><input type="text" class="td-input" value="${item.inst || ''}" placeholder="1/10" style="text-align:center" oninput="calculateAndSchedule()"></td><td><input type="number" class="td-input val-input" value="${item.value}" step="0.01" id="${item.id || ''}" ${locked} oninput="calculateAndSchedule()"></td><td style="text-align:center"><input type="checkbox" ${item.isMine ? 'checked' : ''} onchange="calculateAndSchedule()"></td><td>${del}</td>`;
+        
+        // Se for automático, trava tudo
+        const locked = item.locked || isAuto ? 'readonly style="background:transparent; color:#666"' : 'onfocus="window.isEditing=true" onblur="window.isEditing=false"';
+        const del = item.locked || isAuto ? '' : `<button class="btn-del" onclick="removeRow(this)">×</button>`;
+        const check = item.isMine ? 'checked' : '';
+        const checkAttr = isAuto ? 'disabled checked' : 'onchange="calculateAndSchedule()"';
+
+        tr.innerHTML = `
+            <td><select class="icon-select" ${isAuto?'disabled':''} onchange="calculateAndSchedule()">${opts}</select></td>
+            <td><input type="text" class="td-input" value="${item.name}" ${locked} ${!isAuto?'oninput="calculateAndSchedule()"':''}></td>
+            <td><input type="text" class="td-input" value="${item.desc || ''}" placeholder="Detalhe" ${locked} ${!isAuto?'oninput="calculateAndSchedule()"':''}></td>
+            <td><input type="text" class="td-input" value="${item.inst || ''}" placeholder="1/10" style="text-align:center" ${locked} ${!isAuto?'oninput="calculateAndSchedule()"':''}></td>
+            <td><input type="number" class="td-input val-input" value="${item.value}" step="0.01" id="${item.id || ''}" ${locked} ${!isAuto?'oninput="calculateAndSchedule()"':''}></td>
+            <td style="text-align:center"><input type="checkbox" ${check} ${checkAttr}></td>
+            <td>${del}</td>
+        `;
         tbody.appendChild(tr);
     }
 
     function addSplitRowHTML(tbody, item) {
         const tr = document.createElement("tr");
-        tr.innerHTML = `<td><input type="text" class="td-input split-name" value="${item.name}" placeholder="Nome" oninput="calculateAndSchedule()"></td><td><input type="text" class="td-input" value="${item.desc}" placeholder="Item" oninput="calculateAndSchedule()"></td><td><input type="text" class="td-input split-inst" value="${item.inst || ''}" placeholder="1/10" oninput="updateBar(this); calculateAndSchedule()"><div class="prog-bar"><div class="prog-fill" style="width:0%"></div></div></td><td><input type="number" class="td-input val-input split-val" value="${item.value}" step="0.01" oninput="calculateAndSchedule()"></td><td><button class="btn-del" onclick="removeRow(this)">×</button></td>`;
+        tr.innerHTML = `<td><input type="text" class="td-input split-name" value="${item.name}" placeholder="Nome" oninput="calculateAndSchedule()" onfocus="window.isEditing=true" onblur="window.isEditing=false"></td><td><input type="text" class="td-input" value="${item.desc}" placeholder="Item" oninput="calculateAndSchedule()" onfocus="window.isEditing=true" onblur="window.isEditing=false"></td><td><input type="text" class="td-input split-inst" value="${item.inst || ''}" placeholder="1/10" oninput="updateBar(this); calculateAndSchedule()" onfocus="window.isEditing=true" onblur="window.isEditing=false"><div class="prog-bar"><div class="prog-fill" style="width:0%"></div></div></td><td><input type="number" class="td-input val-input split-val" value="${item.value}" step="0.01" oninput="calculateAndSchedule()" onfocus="window.isEditing=true" onblur="window.isEditing=false"></td><td><button class="btn-del" onclick="removeRow(this)">×</button></td>`;
         tbody.appendChild(tr);
         if(item.inst) updateBar(tr.querySelector('.split-inst'));
     }
 
     function addIncomeRowHTML(tbody, item) {
         const tr = document.createElement("tr");
-        tr.innerHTML = `<td><input type="text" class="td-input" value="${item.desc}" placeholder="Ex: Diária" oninput="calculateAndSchedule()"></td><td><input type="number" class="td-input val-input" value="${item.value}" step="0.01" oninput="calculateAndSchedule()"></td><td><button class="btn-del" onclick="removeRow(this)">×</button></td>`;
+        tr.innerHTML = `<td><input type="text" class="td-input" value="${item.desc}" placeholder="Ex: Diária" oninput="calculateAndSchedule()" onfocus="window.isEditing=true" onblur="window.isEditing=false"></td><td><input type="number" class="td-input val-input" value="${item.value}" step="0.01" oninput="calculateAndSchedule()" onfocus="window.isEditing=true" onblur="window.isEditing=false"></td><td><button class="btn-del" onclick="removeRow(this)">×</button></td>`;
         tbody.appendChild(tr);
     }
 
@@ -600,9 +603,14 @@
     window.togglePaid = (name) => { const idx = window.paidDebtors.indexOf(name); if (idx > -1) window.paidDebtors.splice(idx, 1); else window.paidDebtors.push(name); calculateAndSchedule(); }
 
     window.calculateAll = function() {
+        // 1. Calcula Cartões Primeiro
         const inter = processCard('interTable', 'interTotalBill', 'interMyShareDisplay', 'inter_auto');
         const igor = processCard('igorTable', 'igorTotalBill', 'igorMyShareDisplay', 'igor_auto');
         const lucas = processCard('lucasTable', 'lucasTotalBill', 'lucasMyShareDisplay', 'lucas_auto');
+
+        // 2. Injeta/Atualiza Faturas no Main Table (Visual Apenas)
+        updateAutoRow('Fatura Cartão Igor', igor.myShare, '💳');
+        updateAutoRow('Fatura Cartão Lucas', lucas.myShare, '💳');
 
         let totalExpenses = 0; let myRealExpenses = 0; let fixedSum = 0;
         const emergency = parseFloat(document.getElementById('emergencyFund').value) || 0;
@@ -642,6 +650,35 @@
         // No gráfico, somamos todos os cartões na fatia laranja
         const totalCards = inter.myShare + igor.myShare + lucas.myShare;
         updateChart(fixedSum, totalCards, emergency, totalIncome - totalExpenses);
+    }
+
+    // Função Mágica: Cria ou Atualiza a linha automática
+    function updateAutoRow(name, value, icon) {
+        const tbody = document.querySelector("#mainTable tbody");
+        let found = false;
+        // Procura linha existente
+        tbody.querySelectorAll('tr').forEach(tr => {
+            const inputName = tr.querySelector('input[type="text"]').value;
+            if (inputName === name) {
+                tr.querySelector('.val-input').value = value.toFixed(2);
+                found = true;
+            }
+        });
+        // Se não achou, cria no topo
+        if (!found) {
+            const tr = document.createElement("tr");
+            tr.style.backgroundColor = "#f3f4f6"; // Cinza pra destacar
+            tr.innerHTML = `
+                <td><select class="icon-select" disabled><option>${icon}</option></select></td>
+                <td><input type="text" class="td-input" value="${name}" readonly style="background:transparent; color:#666; font-weight:bold;"></td>
+                <td><input type="text" class="td-input" value="" readonly style="background:transparent;"></td>
+                <td><input type="text" class="td-input" value="" readonly style="background:transparent;"></td>
+                <td><input type="number" class="td-input val-input" value="${value.toFixed(2)}" readonly style="background:transparent; font-weight:bold; color:#0f172a;"></td>
+                <td style="text-align:center"><input type="checkbox" checked disabled></td>
+                <td></td>
+            `;
+            tbody.prepend(tr);
+        }
     }
 
     function processCard(tableId, totalId, displayId, autoInputId) {
