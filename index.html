@@ -6,19 +6,18 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Finanças Dani">
-    <title>Finanças da Dani 14.0 💖</title>
+    <title>Finanças da Dani 15.0 💖</title>
 
-    <link rel="icon" type="image/png" sizes="32x32" href="icone.png?v=14">
-    <link rel="icon" type="image/png" sizes="16x16" href="icone.png?v=14">
-    <link rel="shortcut icon" href="icone.png?v=14">
-    <link rel="apple-touch-icon" href="icone.png?v=14">
+    <link rel="icon" type="image/png" sizes="32x32" href="icone.png?v=15">
+    <link rel="icon" type="image/png" sizes="16x16" href="icone.png?v=15">
+    <link rel="shortcut icon" href="icone.png?v=15">
+    <link rel="apple-touch-icon" href="icone.png?v=15">
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
         :root {
-            /* TEMA ROSE (Personalizado para Ela) */
             --primary: #db2777; 
             --primary-dark: #be185d; 
             --bg-body: #fff1f2; 
@@ -31,7 +30,11 @@
             --success-dark: #059669;
             --danger: #ef4444; 
             --warning: #f59e0b; 
-            --inter: #ff7a00; /* Laranja Inter */
+            
+            /* Cores dos Módulos */
+            --inter: #ff7a00; /* Laranja */
+            --igor: #2563eb;  /* Azul */
+            --lucas: #059669; /* Verde */
         }
 
         body { font-family: 'Inter', sans-serif; background-color: var(--bg-body); color: var(--text-main); margin: 0; padding: 0; }
@@ -83,7 +86,6 @@
         input[type="month"] { border: none; font-family: 'Inter', sans-serif; font-size: 1rem; font-weight: 600; background: transparent; cursor: pointer; color: var(--primary-dark); }
         input[type="month"]:focus { outline: none; }
         
-        /* BOTÕES DE AÇÃO */
         .btn-action {
             color: white; border: none; padding: 8px 15px; border-radius: 50px;
             font-size: 0.85rem; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 5px;
@@ -110,7 +112,7 @@
         .stat-input { width: 100%; font-size: 1.3rem; font-weight: 800; border: none; border-bottom: 2px dashed #fecdd3; background: transparent; padding: 0; color: inherit; }
         .stat-input:focus { outline: none; border-bottom-color: var(--primary); }
 
-        /* BARRA DE CONSUMO (NOVIDADE V14) */
+        /* BARRA DE CONSUMO */
         .salary-bar-bg { width: 100%; height: 6px; background: #e2e8f0; border-radius: 3px; margin-top: 10px; overflow: hidden; }
         .salary-bar-fill { height: 100%; width: 0%; transition: width 0.5s, background-color 0.5s; background: var(--success); }
 
@@ -151,6 +153,9 @@
 
         /* ESTILOS CARTÕES */
         .style-inter { border-left: 5px solid var(--inter); } .style-inter h2 { color: var(--inter); }
+        .style-igor { border-left: 5px solid var(--igor); } .style-igor h2 { color: var(--igor); }
+        .style-lucas { border-left: 5px solid var(--lucas); } .style-lucas h2 { color: var(--lucas); }
+        
         .bill-input { width: 100px; text-align: right; font-weight: bold; padding: 5px; border-radius: 5px; border: 1px solid #fecdd3; color: var(--primary-dark); }
 
         /* DEVEDORES */
@@ -238,7 +243,7 @@
     </div>
 
     <div class="section">
-        <div class="sec-header"><h2>📉 Gastos Fixos & Dívidas</h2></div>
+        <div class="sec-header"><h2>📉 Gastos Fixos</h2></div>
         <div class="sec-body">
             <div class="table-wrap">
                 <table id="mainTable">
@@ -247,6 +252,24 @@
                 </table>
             </div>
             <button class="btn-add" onclick="addMainRow()">+ Adicionar Gasto Fixo</button>
+        </div>
+    </div>
+
+    <div class="section style-igor">
+        <div class="sec-header"><h2>💳 Cartão do Igor</h2><div><small>FATURA:</small><input type="number" id="igorTotalBill" class="bill-input" oninput="calculateAndSchedule()"></div></div>
+        <div class="sec-body">
+            <div class="table-wrap"><table id="igorTable"><thead><tr><th>Quem</th><th>Desc.</th><th>Parc.</th><th>Valor</th><th></th></tr></thead><tbody></tbody></table></div>
+            <button class="btn-add" onclick="addSplitRow('igorTable')">+ Adicionar no Igor</button>
+            <div style="text-align:right; margin-top:10px; color:var(--igor)">Minha parte: <strong id="igorMyShareDisplay">R$ 0,00</strong></div>
+        </div>
+    </div>
+
+    <div class="section style-lucas">
+        <div class="sec-header"><h2>💳 Cartão do Lucas</h2><div><small>FATURA:</small><input type="number" id="lucasTotalBill" class="bill-input" oninput="calculateAndSchedule()"></div></div>
+        <div class="sec-body">
+            <div class="table-wrap"><table id="lucasTable"><thead><tr><th>Quem</th><th>Desc.</th><th>Parc.</th><th>Valor</th><th></th></tr></thead><tbody></tbody></table></div>
+            <button class="btn-add" onclick="addSplitRow('lucasTable')">+ Adicionar no Lucas</button>
+            <div style="text-align:right; margin-top:10px; color:var(--lucas)">Minha parte: <strong id="lucasMyShareDisplay">R$ 0,00</strong></div>
         </div>
     </div>
 
@@ -271,7 +294,7 @@
     </div>
     
     <button class="btn-reset" onclick="resetMonthDefault()">⚠️ RESETAR ESTE MÊS (Correção)</button>
-    <footer>Versão 14.0 - Dani 💖</footer>
+    <footer>Versão 15.0 - Dani 💖</footer>
 </div>
 
 <script type="module">
@@ -322,30 +345,31 @@
         loadMonthData(defaultDate);
     }
 
-    // EXPORTAR EXCEL (ADAPTADO PARA DANI)
+    // EXPORTAR EXCEL
     window.exportToCSV = function() {
         if (!currentDocId) return;
         const rows = [["Categoria", "Item", "Descricao", "Parcela", "Valor", "Meu?"]];
         
-        // Rendas
         rows.push(["Entrada", "Salário Base", "", "", document.getElementById('salary').value, "SIM"]);
         document.querySelectorAll('#incomeTable tbody tr').forEach(tr => {
             const inputs = tr.querySelectorAll('input');
             rows.push(["Renda Extra", inputs[0].value, "", "", inputs[1].value, "SIM"]);
         });
 
-        // Gastos Fixos
         document.querySelectorAll('#mainTable tbody tr').forEach(tr => {
             const inputs = tr.querySelectorAll('input');
-            // Ordem inputs: 0:Nome, 1:Desc, 2:Inst, 3:Valor, 4:Check
             rows.push(["Gasto Fixo", inputs[0].value, inputs[1].value, inputs[2].value, inputs[3].value, inputs[4].checked ? "SIM" : "NAO"]);
         });
 
-        // Cartão Inter
-        document.querySelectorAll('#interTable tbody tr').forEach(tr => {
-            const inputs = tr.querySelectorAll('input');
-            rows.push(["Cartão Inter", inputs[0].value, inputs[1].value, inputs[2].value, inputs[3].value, "SIM"]);
-        });
+        const scrape = (tid, cat) => {
+            document.querySelectorAll(`#${tid} tbody tr`).forEach(tr => {
+                const inputs = tr.querySelectorAll('input');
+                rows.push([cat, inputs[0].value, inputs[1].value, inputs[2].value, inputs[3].value, "SIM"]);
+            });
+        }
+        scrape('igorTable', 'Cartão Igor');
+        scrape('lucasTable', 'Cartão Lucas');
+        scrape('interTable', 'Cartão Inter');
 
         let csvContent = "data:text/csv;charset=utf-8,\uFEFF" + rows.map(e => e.join(";")).join("\n");
         const encodedUri = encodeURI(csvContent);
@@ -356,7 +380,7 @@
         link.click();
     }
 
-    // --- TROCA SEGURA (MANTEVE A CORREÇÃO DE DADOS) ---
+    // --- TROCA SEGURA ---
     window.changeMonthSafe = async function() {
         const newDate = document.getElementById('monthPicker').value;
         if (!newDate || newDate === currentDocId) return;
@@ -374,9 +398,7 @@
     }
 
     function clearScreen() {
-        document.querySelector("#mainTable tbody").innerHTML = "";
-        document.querySelector("#interTable tbody").innerHTML = "";
-        document.querySelector("#incomeTable tbody").innerHTML = "";
+        document.querySelectorAll('tbody').forEach(b => b.innerHTML = "");
         document.getElementById('salary').value = 0;
         document.getElementById('totalExpenses').innerText = "R$ 0,00";
     }
@@ -406,7 +428,7 @@
                 const data = docSnap.data();
                 data.paidDebtors = [];
                 const inc = (arr) => arr.forEach(i => { if(i.inst && i.inst.includes('/')){ let [c,t]=i.inst.split('/'); if(c<t) i.inst=`${parseInt(c)+1}/${t}`; } });
-                if(data.main) inc(data.main); if(data.inter) inc(data.inter);
+                if(data.main) inc(data.main); if(data.inter) inc(data.inter); if(data.igor) inc(data.igor); if(data.lucas) inc(data.lucas);
                 updateScreen(data);
                 setTimeout(() => saveDataSync(currentDocId), 500);
             } else { alert("Mês anterior vazio."); }
@@ -422,7 +444,7 @@
         unsubscribe = onSnapshot(docRef, { includeMetadataChanges: true }, (docSnap) => {
             document.getElementById('loadingOverlay').style.display = 'none';
             if (docSnap.exists()) {
-                if (docSnap.metadata.hasPendingWrites) return; 
+                if (docSnap.metadata.hasPendingWrites) return; // IGNORA ECO LOCAL
                 isReceiving = true;
                 const data = docSnap.data();
                 window.paidDebtors = data.paidDebtors || [];
@@ -448,7 +470,7 @@
         if (isReceiving) return;
         document.getElementById('syncStatus').innerText = "...";
         clearTimeout(saveTimer);
-        saveTimer = setTimeout(() => saveDataSync(currentDocId), 1000);
+        saveTimer = setTimeout(() => saveDataSync(currentDocId), 1000); // 1s Delay
     }
 
     function captureScreenData() {
@@ -456,8 +478,10 @@
             salary: document.getElementById('salary').value, 
             emergency: document.getElementById('emergencyFund').value, 
             interTotal: document.getElementById('interTotalBill').value, 
+            igorTotal: document.getElementById('igorTotalBill').value, 
+            lucasTotal: document.getElementById('lucasTotalBill').value, 
             paidDebtors: window.paidDebtors, 
-            main: [], inter: [], extraIncome: []
+            main: [], inter: [], igor: [], lucas: [], extraIncome: []
         };
         // Renda Extra
         document.querySelectorAll('#incomeTable tbody tr').forEach(tr => {
@@ -473,63 +497,64 @@
                 isMine: inputs[4].checked, locked: inputs[3].hasAttribute('readonly'), id: inputs[3].id || null 
             }); 
         });
-        // Inter
-        document.querySelectorAll('#interTable tbody tr').forEach(tr => {
-            const i = tr.querySelectorAll('input');
-            data.inter.push({ name: i[0].value, desc: i[1].value, inst: i[2].value, value: i[3].value });
-        });
+        // Cartões
+        const scrape = (tid, arr) => {
+            document.querySelectorAll(`#${tid} tbody tr`).forEach(tr => {
+                const i = tr.querySelectorAll('input');
+                arr.push({ name: i[0].value, desc: i[1].value, inst: i[2].value, value: i[3].value });
+            });
+        };
+        scrape('interTable', data.inter);
+        scrape('igorTable', data.igor);
+        scrape('lucasTable', data.lucas);
+        
         return data;
     }
 
     function updateScreen(data) {
+        // --- PROTEÇÃO DE FOCO ---
         const activeEl = document.activeElement;
+        // Se estiver digitando, NÃO ATUALIZA A TELA (exceto carga inicial)
         if (!isReceiving && activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'SELECT')) return;
 
         if (!data) data = getDefaultData();
         if (!data.inter) data.inter = []; 
+        if (!data.igor) data.igor = []; 
+        if (!data.lucas) data.lucas = []; 
         if (!data.extraIncome) data.extraIncome = [];
 
-        // Limpeza e Garantia
+        // Limpa faturas antigas dos fixos se existirem
         if (data.main) {
-             const bannedIds = ['nubank_auto', 'c6_auto', 'itau_auto', 'bb_auto', 'mp_auto', 'passai_auto'];
-             data.main = data.main.filter(item => !bannedIds.includes(item.id));
-
-             const ensureItem = (id, icon, name) => {
-                 if (!data.main.some(i => (id ? i.id === id : i.name === name))) {
-                     data.main.unshift({ icon, name, value: 0, isMine: true, locked: !!id, id: id || null });
-                 }
-             };
-             ensureItem(null, '🧔', 'Fatura Lucas');
-             ensureItem(null, '👱', 'Fatura Igor');
-             ensureItem('inter_auto', '💳', 'Meu Inter');
+             const bannedNames = ['Fatura Igor', 'Fatura Lucas', 'Cartão Igor', 'Cartão Lucas']; 
+             data.main = data.main.filter(item => !bannedNames.includes(item.name));
         }
 
         document.getElementById('salary').value = data.salary || 0;
         document.getElementById('emergencyFund').value = data.emergency || 0;
         document.getElementById('interTotalBill').value = data.interTotal || 0;
+        document.getElementById('igorTotalBill').value = data.igorTotal || 0;
+        document.getElementById('lucasTotalBill').value = data.lucasTotal || 0;
 
         renderTable('incomeTable', data.extraIncome, 'income');
         renderTable('mainTable', data.main, 'main');
         renderTable('interTable', data.inter, 'split');
+        renderTable('igorTable', data.igor, 'split');
+        renderTable('lucasTable', data.lucas, 'split');
         calculateAll();
     }
 
     function getDefaultData() {
         return {
-            salary: 2271.27, emergency: 0, interTotal: 0,
+            salary: 2271.27, emergency: 0, interTotal: 0, igorTotal: 0, lucasTotal: 0,
             main: [
-                { icon: '💳', name: 'Meu Inter', value: 0, isMine: true, locked: true, id: 'inter_auto' },
-                { icon: '👱', name: 'Fatura Igor', value: 0, isMine: true },
-                { icon: '🧔', name: 'Fatura Lucas', value: 0, isMine: true },
                 { icon: '📶', name: 'Claro Flex', value: 40.00, isMine: true },
                 { icon: '🏰', name: 'Disney', value: 11.71, isMine: true },
                 { icon: '🏋️', name: 'Academia', value: 95.00, isMine: true },
-                { icon: '🎧', name: 'Spotify (Lucas)', value: 15.95, isMine: true },
                 { icon: '🥊', name: 'Muay Thai', value: 130.00, isMine: true },
                 { icon: '💅', name: 'Unhas', value: 100.00, isMine: true },
                 { icon: '✍️', name: 'Concursos', value: 100.00, isMine: true },
                 { icon: '🛒', name: 'Supermercado', value: 100.00, isMine: true }
-            ], inter: [], extraIncome: [], paidDebtors: []
+            ], inter: [], igor: [], lucas: [], extraIncome: [], paidDebtors: []
         };
     }
 
@@ -576,6 +601,9 @@
 
     window.calculateAll = function() {
         const inter = processCard('interTable', 'interTotalBill', 'interMyShareDisplay', 'inter_auto');
+        const igor = processCard('igorTable', 'igorTotalBill', 'igorMyShareDisplay', 'igor_auto');
+        const lucas = processCard('lucasTable', 'lucasTotalBill', 'lucasMyShareDisplay', 'lucas_auto');
+
         let totalExpenses = 0; let myRealExpenses = 0; let fixedSum = 0;
         const emergency = parseFloat(document.getElementById('emergencyFund').value) || 0;
         totalExpenses += emergency;
@@ -609,8 +637,11 @@
         else if(percent < 85) bar.style.backgroundColor = "#f59e0b"; 
         else bar.style.backgroundColor = "#ef4444"; 
 
-        updateDebtors({ ...inter.debtors });
-        updateChart(fixedSum, inter.myShare, emergency, totalIncome - totalExpenses);
+        updateDebtors({ ...inter.debtors, ...igor.debtors, ...lucas.debtors });
+        
+        // No gráfico, somamos todos os cartões na fatia laranja
+        const totalCards = inter.myShare + igor.myShare + lucas.myShare;
+        updateChart(fixedSum, totalCards, emergency, totalIncome - totalExpenses);
     }
 
     function processCard(tableId, totalId, displayId, autoInputId) {
@@ -632,8 +663,6 @@
         });
         const myShare = totalBill - othersSum;
         document.getElementById(displayId).innerText = myShare.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
-        const autoInput = document.getElementById(autoInputId);
-        if (autoInput) autoInput.value = myShare.toFixed(2);
         return { debtors, myShare };
     }
 
@@ -660,7 +689,7 @@
         if (rest < 0) rest = 0;
         chartInstance = new Chart(ctx, {
             type: 'doughnut',
-            data: { labels: ['Fixos', 'Inter', 'Reserva', 'Livre'], datasets: [{ data: [fixed, cards, emerg, rest], backgroundColor: ['#db2777', '#f59e0b', '#9333ea', '#10b981'], borderWidth: 0 }] },
+            data: { labels: ['Fixos', 'Cartões', 'Reserva', 'Livre'], datasets: [{ data: [fixed, cards, emerg, rest], backgroundColor: ['#db2777', '#f59e0b', '#9333ea', '#10b981'], borderWidth: 0 }] },
             options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
         });
     }
