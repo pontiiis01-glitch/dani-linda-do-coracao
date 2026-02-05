@@ -138,6 +138,18 @@
         .btn-del { border: none; background: transparent; color: var(--danger); font-size: 1.2rem; cursor: pointer; }
         .btn-reset { width: 100%; padding: 15px; margin-top: 30px; border-radius: 10px; background: #fef2f2; border: 1px solid #ef4444; color: #ef4444; font-weight: 700; cursor: pointer; }
 
+        /* CHECK BUTTON (PAGO) */
+        .btn-check { 
+            width: 24px; height: 24px; border-radius: 50%; border: 2px solid #cbd5e1; 
+            background: #fff; color: white; cursor: pointer; display: flex; 
+            align-items: center; justify-content: center; font-size: 0.8rem; transition: 0.2s;
+        }
+        .btn-check.checked { background: #10b981; border-color: #10b981; }
+        
+        /* ESTILO DE LINHA PAGA */
+        tr.row-paid input { text-decoration: line-through; color: #94a3b8; }
+        tr.row-paid select { opacity: 0.5; }
+
         .style-income { border-left: 5px solid var(--success-dark); } .style-income h2 { color: var(--success-dark); }
         .style-inter { border-left: 5px solid var(--inter); } .style-inter h2 { color: var(--inter); }
         .style-igor { border-left: 5px solid var(--igor); } .style-igor h2 { color: var(--igor); }
@@ -234,7 +246,7 @@
         <div class="sec-body">
             <div class="table-wrap">
                 <table id="mainTable">
-                    <thead><tr><th style="width:40px">Ícone</th><th>Item</th><th>Desc.</th><th style="width:60px; text-align:center">Parc.</th><th style="width:100px">Valor</th><th style="width:40px; text-align:center">Meu?</th><th style="width:30px"></th></tr></thead>
+                    <thead><tr><th style="width:40px">Ícone</th><th>Item</th><th>Desc.</th><th style="width:60px; text-align:center">Parc.</th><th style="width:100px">Valor</th><th style="width:40px; text-align:center">Pago?</th><th style="width:40px; text-align:center">Meu?</th><th style="width:30px"></th></tr></thead>
                     <tbody></tbody>
                 </table>
             </div>
@@ -334,23 +346,24 @@
 
     window.exportToCSV = function() {
         if (!currentDocId) return;
-        const rows = [["Categoria", "Item", "Descricao", "Parcela", "Valor", "Meu?"]];
+        const rows = [["Categoria", "Item", "Descricao", "Parcela", "Valor", "Pago?", "Meu?"]];
         
-        rows.push(["Entrada", "Salário Base", "", "", document.getElementById('salary').value, "SIM"]);
+        rows.push(["Entrada", "Salário Base", "", "", document.getElementById('salary').value, "SIM", "SIM"]);
         document.querySelectorAll('#incomeTable tbody tr').forEach(tr => {
             const inputs = tr.querySelectorAll('input');
-            rows.push(["Renda Extra", inputs[0].value, "", "", inputs[1].value, "SIM"]);
+            rows.push(["Renda Extra", inputs[0].value, "", "", inputs[1].value, "SIM", "SIM"]);
         });
 
         document.querySelectorAll('#mainTable tbody tr').forEach(tr => {
             const inputs = tr.querySelectorAll('input');
-            rows.push(["Gasto Fixo", inputs[0].value, inputs[1].value, inputs[2].value, inputs[3].value, inputs[4].checked ? "SIM" : "NAO"]);
+            const paid = tr.querySelector('.btn-check').classList.contains('checked') ? "SIM" : "NAO";
+            rows.push(["Gasto Fixo", inputs[0].value, inputs[1].value, inputs[2].value, inputs[3].value, paid, inputs[4].checked ? "SIM" : "NAO"]);
         });
 
         const scrape = (tid, cat) => {
             document.querySelectorAll(`#${tid} tbody tr`).forEach(tr => {
                 const inputs = tr.querySelectorAll('input');
-                rows.push([cat, inputs[0].value, inputs[1].value, inputs[2].value, inputs[3].value, "SIM"]);
+                rows.push([cat, inputs[0].value, inputs[1].value, inputs[2].value, inputs[3].value, "NAO", "SIM"]);
             });
         }
         scrape('igorTable', 'Cartão Igor');
@@ -412,6 +425,8 @@
             if (docSnap.exists()) {
                 const data = docSnap.data();
                 data.paidDebtors = [];
+                // Reset Paid status when copying
+                if(data.main) data.main.forEach(i => i.paid = false);
                 const inc = (arr) => arr.forEach(i => { if(i.inst && i.inst.includes('/')){ let [c,t]=i.inst.split('/'); if(c<t) i.inst=`${parseInt(c)+1}/${t}`; } });
                 if(data.main) inc(data.main); if(data.inter) inc(data.inter); if(data.igor) inc(data.igor); if(data.lucas) inc(data.lucas);
                 updateScreen(data);
@@ -481,10 +496,12 @@
         document.querySelectorAll('#mainTable tbody tr').forEach(tr => {
             const inputs = tr.querySelectorAll('input');
             const name = inputs[0].value;
+            const isPaid = tr.querySelector('.btn-check').classList.contains('checked');
+            
             if (name !== 'Fatura Cartão Igor' && name !== 'Fatura Cartão Lucas') {
                 data.main.push({ 
                     icon: tr.querySelector('.icon-select').value, 
-                    name: name, desc: inputs[1].value, inst: inputs[2].value, value: inputs[3].value, 
+                    name: name, desc: inputs[1].value, inst: inputs[2].value, value: inputs[3].value, paid: isPaid,
                     isMine: inputs[4].checked, locked: inputs[3].hasAttribute('readonly'), id: inputs[3].id || null 
                 }); 
             }
@@ -561,12 +578,17 @@
     function addMainRowHTML(tbody, item, isAuto = false) {
         const tr = document.createElement("tr");
         if (isAuto) tr.style.backgroundColor = "#f3f4f6";
+        if (item.paid && !isAuto) tr.classList.add('row-paid'); // Visual Style for Paid
+
         let opts = window.iconsList.map(i => `<option value="${i}" ${i === item.icon ? 'selected' : ''}>${i}</option>`).join('');
         
         const locked = item.locked || isAuto ? 'readonly style="background:transparent; color:#666"' : 'onfocus="window.isEditing=true" onblur="window.isEditing=false"';
         const del = item.locked || isAuto ? '' : `<button class="btn-del" onclick="removeRow(this)">×</button>`;
         const check = item.isMine ? 'checked' : '';
         const checkAttr = isAuto ? 'disabled checked' : 'onchange="calculateAndSchedule()"';
+        
+        // CHECK BUTTON (PAGO)
+        const checkBtn = isAuto ? '' : `<div class="btn-check ${item.paid ? 'checked' : ''}" onclick="toggleRowPaid(this)">✔</div>`;
 
         tr.innerHTML = `
             <td><select class="icon-select" ${isAuto?'disabled':''} onchange="calculateAndSchedule()">${opts}</select></td>
@@ -574,10 +596,19 @@
             <td><input type="text" class="td-input" value="${item.desc || ''}" placeholder="Detalhe" ${locked} ${!isAuto?'oninput="calculateAndSchedule()"':''}></td>
             <td><input type="text" class="td-input" value="${item.inst || ''}" placeholder="1/10" style="text-align:center" ${locked} ${!isAuto?'oninput="calculateAndSchedule()"':''}></td>
             <td><input type="number" class="td-input val-input" value="${item.value}" step="0.01" id="${item.id || ''}" ${locked} ${!isAuto?'oninput="calculateAndSchedule()"':''}></td>
+            <td style="display:flex; justify-content:center; align-items:center;">${checkBtn}</td>
             <td style="text-align:center"><input type="checkbox" ${check} ${checkAttr}></td>
             <td>${del}</td>
         `;
         tbody.appendChild(tr);
+    }
+
+    // NOVA FUNÇÃO TOGGLE PAID
+    window.toggleRowPaid = (btn) => {
+        const tr = btn.closest('tr');
+        btn.classList.toggle('checked');
+        tr.classList.toggle('row-paid');
+        calculateAndSchedule();
     }
 
     function addSplitRowHTML(tbody, item) {
@@ -597,7 +628,6 @@
     window.updateBar = (input) => { const val = input.value; const bar = input.nextElementSibling.querySelector('.prog-fill'); if(val.includes('/')) { const [cur, tot] = val.split('/').map(Number); if(tot > 0) bar.style.width = Math.min((cur/tot)*100, 100) + '%'; } else bar.style.width = '0%'; }
     window.togglePaid = (name) => { const idx = window.paidDebtors.indexOf(name); if (idx > -1) window.paidDebtors.splice(idx, 1); else window.paidDebtors.push(name); calculateAndSchedule(); }
 
-    // CÁLCULO DE SOMA SIMPLES (IGOR E LUCAS)
     function calculateSimpleSum(tableId) {
         let sum = 0;
         document.querySelectorAll(`#${tableId} tbody tr`).forEach(tr => {
@@ -607,17 +637,14 @@
     }
 
     window.calculateAll = function() {
-        // 1. Calcula somas simples de Igor e Lucas
         const igorSum = calculateSimpleSum('igorTable');
         document.getElementById('igorTotalDisplay').innerText = fmt(igorSum);
 
         const lucasSum = calculateSimpleSum('lucasTable');
         document.getElementById('lucasTotalDisplay').innerText = fmt(lucasSum);
 
-        // 2. Calcula Inter
         const inter = processCard('interTable', 'interTotalBill', 'interMyShareDisplay', 'inter_auto');
 
-        // 3. Atualiza Faturas Automáticas na Tabela Principal
         updateAutoRow('Fatura Cartão Igor', igorSum, '💳');
         updateAutoRow('Fatura Cartão Lucas', lucasSum, '💳');
 
@@ -634,7 +661,6 @@
             if (!isCardAuto) fixedSum += val; 
         });
 
-        // Renda
         let extraIncomeTotal = 0;
         document.querySelectorAll('#incomeTable tbody tr').forEach(tr => { extraIncomeTotal += parseFloat(tr.querySelector('.val-input').value) || 0; });
         document.getElementById('extraIncomeTotal').innerText = extraIncomeTotal.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
@@ -646,7 +672,6 @@
         document.getElementById('remaining').innerText = (totalIncome - totalExpenses).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
         document.getElementById('myRealExpenses').innerText = myRealExpenses.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
 
-        // Barra de Consumo
         const percent = totalIncome > 0 ? (totalExpenses / totalIncome) * 100 : 0;
         const bar = document.getElementById('salaryBar');
         bar.style.width = Math.min(percent, 100) + "%";
@@ -654,7 +679,6 @@
         else if(percent < 85) bar.style.backgroundColor = "#f59e0b"; 
         else bar.style.backgroundColor = "#ef4444"; 
 
-        // Atualiza Dívidas (Invertido: A Pagar)
         const debts = {};
         if (igorSum > 0) debts['igor'] = { name: 'Igor', total: igorSum };
         if (lucasSum > 0) debts['lucas'] = { name: 'Lucas', total: lucasSum };
@@ -674,7 +698,7 @@
                 found = true;
             }
         });
-        if (!found && value >= 0) { // Cria mesmo se for 0 para visualização
+        if (!found && value >= 0) {
             const tr = document.createElement("tr");
             tr.style.backgroundColor = "#f3f4f6"; 
             tr.innerHTML = `
@@ -683,6 +707,7 @@
                 <td><input type="text" class="td-input" value="" readonly style="background:transparent;"></td>
                 <td><input type="text" class="td-input" value="" readonly style="background:transparent;"></td>
                 <td><input type="number" class="td-input val-input" value="${value.toFixed(2)}" readonly style="background:transparent; font-weight:bold; color:#0f172a;"></td>
+                <td></td>
                 <td style="text-align:center"><input type="checkbox" checked disabled></td>
                 <td></td>
             `;
@@ -704,7 +729,7 @@
 
     function updateDebtors(all) {
         const list = document.getElementById('debtorsList'); list.innerHTML = "";
-        let tr = 0; let r = 0; // tr = To Pay (Red), r = Paid (Green)
+        let tr = 0; let r = 0; 
         if (Object.keys(all).length === 0) list.innerHTML = "<div style='color:#999; width:100%; text-align:center'>Nenhuma dívida.</div>";
         else {
             for (let k in all) {
@@ -713,8 +738,7 @@
                 if (isPaid) r += p.total; else tr += p.total;
                 
                 const div = document.createElement('div'); div.className = `debt-item ${isPaid ? 'is-paid' : ''}`;
-                // LÓGICA INVERTIDA DE CORES PARA DÍVIDA
-                const statusColor = isPaid ? '#15803d' : '#ef4444'; // Verde se pago, Vermelho se deve
+                const statusColor = isPaid ? '#15803d' : '#ef4444'; 
                 
                 div.innerHTML = `<div class="d-head"><div class="d-name">${p.name}</div><div class="pay-check ${isPaid ? 'checked' : ''}" onclick="togglePaid('${p.name}')">${isPaid ? '✔' : ''}</div></div><div class="d-status" style="color:${statusColor}">${isPaid ? 'PAGO' : 'FALTA PAGAR'}</div><div class="d-val">${p.total.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}</div>`;
                 list.appendChild(div);
