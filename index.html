@@ -15,7 +15,7 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
+
     <style>
         :root {
             --primary: #db2777; 
@@ -25,7 +25,7 @@
             --text-main: #0f172a; 
             --text-muted: #64748b; 
             --border: #fecdd3;
-            
+
             --success: #10b981; 
             --success-dark: #059669;
             --danger: #ef4444; 
@@ -36,7 +36,7 @@
         }
 
         body { font-family: 'Inter', sans-serif; background-color: var(--bg-body); color: var(--text-main); margin: 0; padding: 0; }
-        
+
         #loadingOverlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.95);
             z-index: 9999; display: none; align-items: center; justify-content: center; flex-direction: column;
@@ -69,10 +69,10 @@
         .error-msg { color: var(--danger); font-size: 0.85rem; margin-top: 10px; min-height: 20px; font-weight: 600; }
 
         #appContent { display: none; padding: 15px; padding-bottom: 100px; max-width: 1000px; margin: 0 auto; }
-        
+
         header { display: flex; flex-direction: column; align-items: center; gap: 15px; margin-bottom: 20px; margin-top: 10px; }
         .controls-row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; align-items: center; }
-        
+
         .date-control {
             background: #fff; padding: 8px 15px; border-radius: 50px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05); display: flex; align-items: center;
@@ -80,7 +80,7 @@
         }
         input[type="month"] { border: none; font-family: 'Inter', sans-serif; font-size: 1rem; font-weight: 600; background: transparent; cursor: pointer; color: var(--primary-dark); }
         input[type="month"]:focus { outline: none; }
-        
+
         .btn-action {
             color: white; border: none; padding: 8px 15px; border-radius: 50px;
             font-size: 0.85rem; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 5px;
@@ -130,10 +130,10 @@
         input.td-input:focus { background: #fff; border-color: var(--primary); outline: none; }
         select.icon-select { border: none; background: transparent; font-size: 1.2rem; cursor: pointer; }
         input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--primary); }
-        
+
         .prog-bar { height: 4px; background: #fecdd3; border-radius: 2px; margin-top: 5px; overflow: hidden; }
         .prog-fill { height: 100%; background: var(--primary); width: 0%; transition: width 0.3s; }
-        
+
         .btn-add { width: 100%; padding: 12px; margin-top: 15px; border-radius: 10px; border: 2px dashed #fda4af; background: #fff1f2; color: var(--primary); font-weight: 600; cursor: pointer; transition: 0.2s; }
         .btn-del { border: none; background: transparent; color: var(--danger); font-size: 1.2rem; cursor: pointer; }
         .btn-reset { width: 100%; padding: 15px; margin-top: 30px; border-radius: 10px; background: #fef2f2; border: 1px solid #ef4444; color: #ef4444; font-weight: 700; cursor: pointer; }
@@ -154,7 +154,7 @@
         .style-inter { border-left: 5px solid var(--inter); } .style-inter h2 { color: var(--inter); }
         .style-igor { border-left: 5px solid var(--igor); } .style-igor h2 { color: var(--igor); }
         .style-lucas { border-left: 5px solid var(--lucas); } .style-lucas h2 { color: var(--lucas); }
-        
+
         .bill-input { width: 100px; text-align: right; font-weight: bold; padding: 5px; border-radius: 5px; border: 1px solid #fecdd3; color: var(--primary-dark); }
 
         /* DEVEDORES */
@@ -289,7 +289,7 @@
             <div id="debtorsList" class="debt-list"></div>
         </div>
     </div>
-    
+
     <button class="btn-reset" onclick="resetMonthDefault()">⚠️ RESETAR ESTE MÊS (Correção)</button>
     <footer>Versão 18.0 - Dani 💖</footer>
 </div>
@@ -333,7 +333,7 @@
     let saveTimer;
     let unsubscribe = null;
     let chartInstance = null;
-    
+
     window.paidDebtors = [];
     window.iconsList = ["💸", "🏠", "📶", "🏰", "🎧", "🥊", "💅", "✍️", "🚗", "🛒", "💄", "🏥", "🏋️", "👱", "🧔"];
 
@@ -347,7 +347,7 @@
     window.exportToCSV = function() {
         if (!currentDocId) return;
         const rows = [["Categoria", "Item", "Descricao", "Parcela", "Valor", "Pago?", "Meu?"]];
-        
+
         rows.push(["Entrada", "Salário Base", "", "", document.getElementById('salary').value, "SIM", "SIM"]);
         document.querySelectorAll('#incomeTable tbody tr').forEach(tr => {
             const inputs = tr.querySelectorAll('input');
@@ -356,7 +356,8 @@
 
         document.querySelectorAll('#mainTable tbody tr').forEach(tr => {
             const inputs = tr.querySelectorAll('input');
-            const paid = tr.querySelector('.btn-check').classList.contains('checked') ? "SIM" : "NAO";
+            const checkBtn = tr.querySelector('.btn-check');
+            const paid = (checkBtn && checkBtn.classList.contains('checked')) ? "SIM" : "NAO";
             rows.push(["Gasto Fixo", inputs[0].value, inputs[1].value, inputs[2].value, inputs[3].value, paid, inputs[4].checked ? "SIM" : "NAO"]);
         });
 
@@ -384,7 +385,7 @@
         if (!newDate || newDate === currentDocId) return;
 
         document.getElementById('loadingOverlay').style.display = 'flex';
-        
+
         if (unsubscribe) unsubscribe();
         clearTimeout(saveTimer);
 
@@ -419,13 +420,12 @@
         let month = parseInt(parts[1]);
         month--; if (month === 0) { month = 12; year--; }
         const prevId = `${year}-${String(month).padStart(2, '0')}`;
-        
+
         try {
             const docSnap = await getDoc(doc(db, "gastos_namorada", prevId));
             if (docSnap.exists()) {
                 const data = docSnap.data();
                 data.paidDebtors = [];
-                // Reset Paid status when copying
                 if(data.main) data.main.forEach(i => i.paid = false);
                 const inc = (arr) => arr.forEach(i => { if(i.inst && i.inst.includes('/')){ let [c,t]=i.inst.split('/'); if(c<t) i.inst=`${parseInt(c)+1}/${t}`; } });
                 if(data.main) inc(data.main); if(data.inter) inc(data.inter); if(data.igor) inc(data.igor); if(data.lucas) inc(data.lucas);
@@ -438,14 +438,14 @@
     function loadMonthData(dateString) {
         currentDocId = dateString;
         document.getElementById('syncStatus').innerText = "Carregando...";
-        
+
         const docRef = doc(db, "gastos_namorada", currentDocId);
-        
+
         unsubscribe = onSnapshot(docRef, { includeMetadataChanges: true }, (docSnap) => {
             document.getElementById('loadingOverlay').style.display = 'none';
             if (docSnap.exists()) {
                 if (docSnap.metadata.hasPendingWrites) return; 
-                
+
                 if (window.isEditing) {
                     console.log("Ignorando update externo pois o usuário está editando.");
                     return; 
@@ -484,8 +484,8 @@
             salary: document.getElementById('salary').value, 
             emergency: document.getElementById('emergencyFund').value, 
             interTotal: document.getElementById('interTotalBill').value, 
-            igorTotal: document.getElementById('igorTotalBill').value, 
-            lucasTotal: document.getElementById('lucasTotalBill').value, 
+            igorTotal: document.getElementById('igorTotalDisplay') ? document.getElementById('igorTotalDisplay').innerText.replace(/[^\d,-]/g, '').replace(',', '.') : 0, 
+            lucasTotal: document.getElementById('lucasTotalDisplay') ? document.getElementById('lucasTotalDisplay').innerText.replace(/[^\d,-]/g, '').replace(',', '.') : 0, 
             paidDebtors: window.paidDebtors, 
             main: [], inter: [], igor: [], lucas: [], extraIncome: []
         };
@@ -496,7 +496,8 @@
         document.querySelectorAll('#mainTable tbody tr').forEach(tr => {
             const inputs = tr.querySelectorAll('input');
             const name = inputs[0].value;
-            const isPaid = tr.querySelector('.btn-check').classList.contains('checked');
+            const checkBtn = tr.querySelector('.btn-check');
+            const isPaid = checkBtn ? checkBtn.classList.contains('checked') : false;
             
             if (name !== 'Fatura Cartão Igor' && name !== 'Fatura Cartão Lucas') {
                 data.main.push({ 
@@ -515,7 +516,7 @@
         scrape('interTable', data.inter);
         scrape('igorTable', data.igor);
         scrape('lucasTable', data.lucas);
-        
+
         return data;
     }
 
@@ -542,7 +543,7 @@
         renderTable('interTable', data.inter, 'split');
         renderTable('igorTable', data.igor, 'split');
         renderTable('lucasTable', data.lucas, 'split');
-        
+
         calculateAll();
     }
 
@@ -574,20 +575,19 @@
             else addSplitRowHTML(tbody, item);
         });
     }
-    
+
     function addMainRowHTML(tbody, item, isAuto = false) {
         const tr = document.createElement("tr");
         if (isAuto) tr.style.backgroundColor = "#f3f4f6";
-        if (item.paid && !isAuto) tr.classList.add('row-paid'); // Visual Style for Paid
+        if (item.paid && !isAuto) tr.classList.add('row-paid'); 
 
         let opts = window.iconsList.map(i => `<option value="${i}" ${i === item.icon ? 'selected' : ''}>${i}</option>`).join('');
-        
+
         const locked = item.locked || isAuto ? 'readonly style="background:transparent; color:#666"' : 'onfocus="window.isEditing=true" onblur="window.isEditing=false"';
         const del = item.locked || isAuto ? '' : `<button class="btn-del" onclick="removeRow(this)">×</button>`;
         const check = item.isMine ? 'checked' : '';
         const checkAttr = isAuto ? 'disabled checked' : 'onchange="calculateAndSchedule()"';
         
-        // CHECK BUTTON (PAGO)
         const checkBtn = isAuto ? '' : `<div class="btn-check ${item.paid ? 'checked' : ''}" onclick="toggleRowPaid(this)">✔</div>`;
 
         tr.innerHTML = `
@@ -603,7 +603,6 @@
         tbody.appendChild(tr);
     }
 
-    // NOVA FUNÇÃO TOGGLE PAID
     window.toggleRowPaid = (btn) => {
         const tr = btn.closest('tr');
         btn.classList.toggle('checked');
@@ -682,9 +681,9 @@
         const debts = {};
         if (igorSum > 0) debts['igor'] = { name: 'Igor', total: igorSum };
         if (lucasSum > 0) debts['lucas'] = { name: 'Lucas', total: lucasSum };
-        
+
         updateDebtors(debts);
-        
+
         const totalCards = inter.myShare + igorSum + lucasSum;
         updateChart(fixedSum, totalCards, emergency, totalIncome - totalExpenses);
     }
@@ -698,7 +697,7 @@
                 found = true;
             }
         });
-        if (!found && value >= 0) {
+        if (!found && value >= 0) { 
             const tr = document.createElement("tr");
             tr.style.backgroundColor = "#f3f4f6"; 
             tr.innerHTML = `
@@ -736,10 +735,10 @@
                 const p = all[k]; 
                 const isPaid = window.paidDebtors.includes(p.name);
                 if (isPaid) r += p.total; else tr += p.total;
-                
+
                 const div = document.createElement('div'); div.className = `debt-item ${isPaid ? 'is-paid' : ''}`;
                 const statusColor = isPaid ? '#15803d' : '#ef4444'; 
-                
+
                 div.innerHTML = `<div class="d-head"><div class="d-name">${p.name}</div><div class="pay-check ${isPaid ? 'checked' : ''}" onclick="togglePaid('${p.name}')">${isPaid ? '✔' : ''}</div></div><div class="d-status" style="color:${statusColor}">${isPaid ? 'PAGO' : 'FALTA PAGAR'}</div><div class="d-val">${p.total.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}</div>`;
                 list.appendChild(div);
             }
@@ -758,7 +757,7 @@
             options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
         });
     }
-    
+
     function fmt(n) { return n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); }
 </script>
 </body>
