@@ -1,298 +1,421 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-theme="light">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Finanças Dani">
-    <title>Finanças da Dani 18.0 💖</title>
+    <title>Finanças da Dani Pro 💖</title>
 
-    <link rel="icon" type="image/png" sizes="32x32" href="icone.png?v=18">
-    <link rel="icon" type="image/png" sizes="16x16" href="icone.png?v=18">
-    <link rel="shortcut icon" href="icone.png?v=18">
-    <link rel="apple-touch-icon" href="icone.png?v=18">
-
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="icone.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
     <style>
+        /* --- PALETA ULTRA PREMIUM DANI (ROSAS) --- */
         :root {
-            --primary: #db2777; 
-            --primary-dark: #be185d; 
-            --bg-body: #fff1f2; 
-            --bg-card: #ffffff;
-            --text-main: #0f172a; 
-            --text-muted: #64748b; 
-            --border: #fecdd3;
-
-            --success: #10b981; 
-            --success-dark: #059669;
-            --danger: #ef4444; 
-            --warning: #f59e0b; 
-            --inter: #ff7a00; 
-            --igor: #2563eb;  
+            --primary: #db2777; --primary-light: #fce7f3; --primary-gradient: linear-gradient(135deg, #f472b6, #db2777);
+            --bg-body: #fdf2f8; --bg-card: #ffffff; --bg-sidebar: rgba(255, 255, 255, 0.85);
+            --text-main: #0f172a; --text-muted: #64748b; 
+            --border: #fbcfe8; --border-light: rgba(251, 207, 232, 0.5);
+            --success: #10b981; --success-bg: #dcfce7; --success-text: #065f46;
+            --danger: #ef4444; --danger-bg: #fee2e2; --danger-text: #991b1b;
+            --warning: #f59e0b; --warning-bg: #fef3c7; --purple: #9333ea;
+            
+            /* Cores específicas dos Cartões */
+            --igor: #2563eb; 
             --lucas: #059669; 
+            --inter: #ff7a00;
+
+            --shadow-sm: 0 2px 10px rgba(0,0,0,0.03);
+            --shadow: 0 10px 30px -5px rgba(219, 39, 119, 0.08);
+            --shadow-hover: 0 20px 40px -10px rgba(219, 39, 119, 0.15);
+            --glass-blur: blur(12px);
+            --transition-smooth: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            --radius-xl: 28px; --radius-lg: 20px; --radius-md: 14px;
         }
 
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg-body); color: var(--text-main); margin: 0; padding: 0; }
+        [data-theme="dark"] {
+            --primary: #f472b6; --primary-light: rgba(219, 39, 119, 0.15); --primary-gradient: linear-gradient(135deg, #f472b6, #be185d);
+            --bg-body: #0B0F19; --bg-card: #151B2B; --bg-sidebar: rgba(21, 27, 43, 0.85);
+            --text-main: #f8fafc; --text-muted: #94a3b8; 
+            --border: #334155; --border-light: rgba(51, 65, 85, 0.5);
+            --success: #10b981; --success-bg: rgba(16, 185, 129, 0.1); --success-text: #34d399;
+            --danger: #ef4444; --danger-bg: rgba(239, 68, 68, 0.1); --danger-text: #f87171;
+            --warning-bg: rgba(245, 158, 11, 0.1);
+            --shadow-sm: 0 4px 15px rgba(0,0,0,0.2);
+            --shadow: 0 10px 30px -5px rgba(0,0,0,0.4);
+            --shadow-hover: 0 20px 40px -10px rgba(0,0,0,0.6);
+        }
 
-        #loadingOverlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.95);
-            z-index: 9999; display: none; align-items: center; justify-content: center; flex-direction: column;
-        }
-        .spinner {
-            width: 40px; height: 40px; border: 4px solid #fecdd3; border-top: 4px solid var(--primary);
-            border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px;
-        }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-body); color: var(--text-main); margin: 0; display: flex; height: 100vh; overflow: hidden; transition: background 0.5s ease; -webkit-tap-highlight-color: transparent; }
+        
+        /* ANIMAÇÕES FLUIDAS */
+        @keyframes slideUpFade { from { opacity: 0; transform: translateY(25px); } to { opacity: 1; transform: translateY(0); } }
+        tbody tr { animation: slideUpFade 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
+        tbody tr:nth-child(1) { animation-delay: 0.05s; } tbody tr:nth-child(2) { animation-delay: 0.1s; } tbody tr:nth-child(3) { animation-delay: 0.15s; } tbody tr:nth-child(n+4) { animation-delay: 0.2s; }
+
+        /* CONTAINERS PRINCIPAIS */
+        .section { background: var(--bg-card); border-radius: var(--radius-xl); margin-bottom: 30px; box-shadow: var(--shadow); border: 1px solid var(--border-light); transition: var(--transition-smooth); overflow: hidden; position: relative; }
+        .sec-header { padding: 25px 30px; border-bottom: 1px solid var(--border-light); background: transparent; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .sec-header h2 { margin: 0; font-size: 1.25rem; font-weight: 800; letter-spacing: -0.5px; display: flex; align-items: center; gap: 10px; }
+        .sec-body { padding: 30px; }
+
+        /* INPUTS ESTILO APPLE */
+        input.sys-input, input.val-input { width: 100%; padding: 14px 16px; border: 2px solid transparent; border-radius: var(--radius-md); background: var(--bg-body); color: var(--text-main); font-family: 'Inter'; font-weight: 600; font-size: 1rem; transition: var(--transition-smooth); box-sizing: border-box; }
+        input.sys-input:focus, input.val-input:focus { background: var(--bg-card); border-color: var(--primary); outline: none; box-shadow: 0 0 0 4px var(--primary-light); transform: translateY(-2px); }
+        select.sys-select { border: none; background: transparent; font-size: 1.5rem; cursor: pointer; transition: 0.2s; appearance: none; }
+        select.sys-select:hover { transform: scale(1.15) rotate(5deg); }
+        input[type="checkbox"] { width: 22px; height: 22px; accent-color: var(--primary); cursor: pointer; border-radius: 6px; }
+
+        /* TOAST E SKELETON */
+        #saveToast { position: fixed; top: 20px; right: 20px; background: var(--success); color: white; padding: 14px 28px; border-radius: 50px; font-weight: 700; box-shadow: 0 15px 30px rgba(16, 185, 129, 0.3); z-index: 9999; transform: translateY(-100px); transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1); display: flex; align-items: center; gap: 10px; font-size: 1rem; }
+        #saveToast.show { transform: translateY(0); }
+        
+        #loadingOverlay { position: fixed; inset: 0; background: var(--bg-body); z-index: 9998; display: none; align-items: center; justify-content: center; flex-direction: column; transition: opacity 0.3s; }
+        .spinner { width: 40px; height: 40px; border: 4px solid var(--border-light); border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        #lockScreen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-body);
-            display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9990;
-        }
-        .lock-box {
-            background: #fff; padding: 40px; border-radius: 20px; box-shadow: 0 10px 25px rgba(219, 39, 119, 0.15); 
-            text-align: center; max-width: 90%; width: 320px; border: 1px solid var(--border);
-        }
-        .lock-input {
-            width: 100%; padding: 15px; font-size: 1.5rem; text-align: center; letter-spacing: 5px;
-            border: 2px solid var(--border); border-radius: 10px; margin: 20px 0; outline: none;
-            font-weight: 800; background: #fff; color: var(--primary);
-        }
-        .lock-input:focus { border-color: var(--primary); }
-        .btn-unlock {
-            background: var(--primary); color: white; border: none; padding: 15px; width: 100%;
-            border-radius: 10px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: 0.2s;
-        }
-        .btn-unlock:hover { background: var(--primary-dark); }
-        .error-msg { color: var(--danger); font-size: 0.85rem; margin-top: 10px; min-height: 20px; font-weight: 600; }
+        /* MENUS: DESKTOP (SIDEBAR) & MOBILE (BOTTOM NAV) */
+        #sidebar { width: 280px; background: var(--bg-sidebar); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); border-right: 1px solid var(--border-light); display: flex; flex-direction: column; padding: 30px 20px; z-index: 100; height: 100%; box-sizing: border-box; transition: var(--transition-smooth); }
+        .brand { font-size: 1.5rem; font-weight: 900; color: var(--text-main); margin-bottom: 40px; display: flex; align-items: center; gap: 12px; letter-spacing: -1px; padding: 0 10px; }
+        .brand .material-icons-round { color: var(--primary); font-size: 2rem; background: var(--primary-light); padding: 8px; border-radius: 12px; }
+        
+        .nav-btn { background: transparent; border: none; color: var(--text-muted); padding: 14px 18px; text-align: left; font-size: 1rem; font-weight: 600; cursor: pointer; border-radius: var(--radius-md); margin-bottom: 8px; display: flex; align-items: center; gap: 15px; transition: var(--transition-smooth); width: 100%; position: relative; overflow: hidden; }
+        .nav-btn:hover { color: var(--text-main); background: var(--bg-body); transform: translateX(5px); }
+        .nav-btn.active { background: var(--primary-gradient); color: white; box-shadow: 0 8px 20px rgba(219, 39, 119, 0.3); transform: none; font-weight: 700; }
+        .menu-divider { height: 1px; background: var(--border-light); margin: 20px 10px; }
+        
+        #main-content { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 30px 40px; position: relative; scroll-behavior: smooth; }
+        .mobile-header { display: none; }
 
-        #appContent { display: none; padding: 15px; padding-bottom: 100px; max-width: 1000px; margin: 0 auto; }
-
-        header { display: flex; flex-direction: column; align-items: center; gap: 15px; margin-bottom: 20px; margin-top: 10px; }
-        .controls-row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; align-items: center; }
-
-        .date-control {
-            background: #fff; padding: 8px 15px; border-radius: 50px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05); display: flex; align-items: center;
-            gap: 10px; border: 1px solid var(--border);
-        }
-        input[type="month"] { border: none; font-family: 'Inter', sans-serif; font-size: 1rem; font-weight: 600; background: transparent; cursor: pointer; color: var(--primary-dark); }
-        input[type="month"]:focus { outline: none; }
-
-        .btn-action {
-            color: white; border: none; padding: 8px 15px; border-radius: 50px;
-            font-size: 0.85rem; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 5px;
-        }
-        .btn-copy { background: #3b82f6; } 
-        .btn-export { background: #10b981; }
-
-        .btn-logout-simple {
-            background: #fee2e2; color: #b91c1c; border: none; padding: 8px 12px; border-radius: 50px;
-            font-size: 0.8rem; cursor: pointer; font-weight: 600;
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            #sidebar { order: 2; width: 100%; height: calc(75px + env(safe-area-inset-bottom)); flex-direction: row; justify-content: space-between; padding: 10px 15px max(15px, env(safe-area-inset-bottom)) 15px; border-right: none; border-top: 1px solid var(--border-light); box-shadow: 0 -10px 30px rgba(0,0,0,0.05); z-index: 999; background: var(--bg-sidebar); }
+            .brand, .menu-divider, .btn-config, .btn-lock { display: none; }
+            .nav-btn { flex-direction: column; gap: 4px; padding: 8px; justify-content: center; text-align: center; margin: 0; font-size: 0.65rem; font-weight: 700; border-radius: 16px; flex: 1; }
+            .nav-btn .material-icons-round { font-size: 1.5rem; margin-bottom: 2px; }
+            .nav-btn:hover { transform: none; background: transparent; }
+            .nav-btn.active { background: transparent; color: var(--primary); box-shadow: none; }
+            .nav-btn.active::after { content: ''; position: absolute; top: -10px; left: 50%; transform: translateX(-50%); width: 40px; height: 4px; background: var(--primary); border-radius: 0 0 4px 4px; }
+            
+            #main-content { order: 1; padding: max(55px, env(safe-area-inset-top)) 15px 20px 15px; height: calc(100vh - 75px - env(safe-area-inset-bottom)); }
+            .mobile-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding: 0 5px; }
+            .mobile-header h1 { margin: 0; font-size: 1.8rem; font-weight: 900; letter-spacing: -1px; }
+            .mobile-header-actions { display: flex; gap: 12px; }
+            .mobile-btn { background: var(--bg-card); border: 1px solid var(--border-light); color: var(--text-main); border-radius: 50%; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-sm); cursor: pointer; transition: 0.2s; }
+            .mobile-btn:active { transform: scale(0.9); }
         }
 
-        .sync-indicator { font-size: 0.75rem; font-weight: 600; padding: 4px 10px; border-radius: 20px; background: #fff; color: var(--text-muted); }
+        /* HEADER E CONTROLES */
+        .controls-row { display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 30px; align-items: center; justify-content: space-between; background: var(--bg-card); padding: 15px 25px; border-radius: var(--radius-xl); box-shadow: var(--shadow-sm); border: 1px solid var(--border-light); }
+        .date-control { display: flex; align-items: center; gap: 12px; color: var(--primary); font-weight: 800; font-size: 1.1rem; }
+        input[type="month"] { background: transparent; border: none; font-family: 'Inter'; font-weight: 800; color: var(--text-main); font-size: 1.1rem; cursor: pointer; outline: none; }
+        
+        .actions-group { display: flex; gap: 12px; flex-wrap: wrap; }
+        .btn-action { padding: 12px 24px; border-radius: var(--radius-md); border: none; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: var(--transition-smooth); font-size: 0.95rem; }
+        .btn-action:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); }
+        .btn-action:active { transform: scale(0.96); }
+        .btn-save { background: var(--primary-gradient); color: white; box-shadow: 0 8px 15px rgba(219, 39, 119, 0.25); }
+        .btn-outline { background: transparent; border: 2px solid var(--border); color: var(--text-main); }
+        .btn-outline:hover { border-color: var(--text-main); background: var(--bg-body); }
+        .btn-export { background: #10b981; color: white; box-shadow: 0 8px 15px rgba(16, 185, 129, 0.25); }
 
-        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 30px; }
-        .card-stat {
-            background: var(--bg-card); padding: 15px; border-radius: 16px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.03); border: 1px solid var(--border);
-            display: flex; flex-direction: column; justify-content: space-between;
+        @media (max-width: 768px) {
+            .controls-row { flex-direction: column; align-items: stretch; padding: 20px; border-radius: var(--radius-lg); gap: 20px; }
+            .date-control { justify-content: center; background: var(--bg-body); padding: 12px; border-radius: var(--radius-md); }
+            .actions-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
+            .btn-action { justify-content: center; width: 100%; padding: 14px; }
+            .actions-group > :nth-child(1) { grid-column: span 2; }
+            .actions-group > :nth-child(4) { grid-column: span 2; } 
         }
-        .card-stat h3 { margin: 0 0 5px 0; font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); font-weight: 600; }
-        .card-stat .val { font-size: 1.3rem; font-weight: 800; color: var(--text-main); }
-        .stat-input { width: 100%; font-size: 1.3rem; font-weight: 800; border: none; border-bottom: 2px dashed #fecdd3; background: transparent; padding: 0; color: inherit; }
-        .stat-input:focus { outline: none; border-bottom-color: var(--primary); }
 
-        .salary-bar-bg { width: 100%; height: 6px; background: #e2e8f0; border-radius: 3px; margin-top: 10px; overflow: hidden; }
-        .salary-bar-fill { height: 100%; width: 0%; transition: width 0.5s, background-color 0.5s; background: var(--success); }
+        /* DASHBOARD CARDS */
+        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px; margin-bottom: 40px; }
+        .card-stat { background: var(--bg-card); padding: 25px; border-radius: var(--radius-xl); display: flex; flex-direction: column; justify-content: space-between; position: relative; box-shadow: var(--shadow); border: 1px solid var(--border-light); transition: var(--transition-smooth); }
+        .card-stat:hover { transform: translateY(-5px); box-shadow: var(--shadow-hover); }
+        .card-stat h3 { margin: 0 0 15px 0; font-size: 0.85rem; text-transform: uppercase; color: var(--text-muted); font-weight: 800; letter-spacing: 0.5px; display: flex; align-items: center; gap: 8px; }
+        .val { font-size: 1.8rem; font-weight: 900; color: var(--text-main); letter-spacing: -0.5px; }
+        
+        .stat-input { width: 100%; font-size: 1.8rem; font-weight: 900; background: transparent; border: none; border-bottom: 2px dashed var(--border-light); color: var(--text-main); padding-bottom: 5px; font-family: 'Inter'; border-radius: 0; transition: 0.3s; letter-spacing: -0.5px; }
+        .stat-input:focus { outline: none; border-color: var(--primary); transform: scale(1.02); }
+        
+        .c-salary h3 { color: var(--success); } .c-salary .stat-input { color: var(--success); }
+        .c-total h3 { color: var(--danger); } .c-total .val { color: var(--danger); }
+        .c-rest { background: var(--primary-gradient); color: white; border: none; }
+        .c-rest h3 { color: rgba(255,255,255,0.8); } .c-rest .val { color: white; }
+        .c-income h3 { color: #059669; }
+        .c-mine h3 { color: var(--warning); }
+        .c-emerg h3 { color: var(--purple); }
 
-        .chart-container { background: #fff; padding: 20px; border-radius: 20px; margin-bottom: 30px; border: 1px solid var(--border); height: 300px; display: flex; justify-content: center; }
+        .salary-bar-bg { width: 100%; height: 8px; background: var(--bg-body); border-radius: 10px; margin-top: 20px; overflow: hidden; }
+        .salary-bar-fill { height: 100%; width: 0%; transition: width 1s cubic-bezier(0.16, 1, 0.3, 1); background: var(--success); border-radius: 10px; }
 
-        .c-salary .val, .c-salary input { color: var(--success); }
-        .c-income .val { color: var(--success-dark); }
-        .c-total .val { color: var(--danger); }
-        .c-rest .val { color: var(--primary); }
-        .c-mine .val { color: var(--warning); }
-        .c-emerg .val, .c-emerg input { color: #9333ea; }
+        /* TABELAS FLUTUANTES */
+        .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 15px; }
+        table { width: 100%; border-collapse: separate; border-spacing: 0 12px; min-width: 650px; } 
+        th { text-align: left; padding: 0 20px 10px 20px; font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 800; border: none; }
+        td { padding: 15px 20px; background: var(--bg-body); vertical-align: middle; border: 1px solid transparent; transition: 0.2s; }
+        tr:hover td { border-color: var(--primary-light); background: var(--bg-card); box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
+        
+        td input.sys-input { min-width: 130px; }
+        td input.val-input { min-width: 100px; }
 
-        .section { background: var(--bg-card); border-radius: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); margin-bottom: 30px; border: 1px solid var(--border); overflow: hidden; }
-        .sec-header { padding: 15px 20px; background: #fff; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-        .sec-header h2 { margin: 0; font-size: 1.1rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
-        .sec-body { padding: 20px; }
-        .table-wrap { overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; min-width: 600px; }
-        th { text-align: left; padding: 10px; font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); border-bottom: 2px solid var(--border); }
-        td { padding: 10px; border-bottom: 1px solid var(--border); vertical-align: middle; }
-        input.td-input { width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem; background: #fff1f2; color: var(--text-main); }
-        input.td-input:focus { background: #fff; border-color: var(--primary); outline: none; }
-        select.icon-select { border: none; background: transparent; font-size: 1.2rem; cursor: pointer; }
-        input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--primary); }
-
-        .prog-bar { height: 4px; background: #fecdd3; border-radius: 2px; margin-top: 5px; overflow: hidden; }
-        .prog-fill { height: 100%; background: var(--primary); width: 0%; transition: width 0.3s; }
-
-        .btn-add { width: 100%; padding: 12px; margin-top: 15px; border-radius: 10px; border: 2px dashed #fda4af; background: #fff1f2; color: var(--primary); font-weight: 600; cursor: pointer; transition: 0.2s; }
-        .btn-del { border: none; background: transparent; color: var(--danger); font-size: 1.2rem; cursor: pointer; }
-        .btn-reset { width: 100%; padding: 15px; margin-top: 30px; border-radius: 10px; background: #fef2f2; border: 1px solid #ef4444; color: #ef4444; font-weight: 700; cursor: pointer; }
+        td:first-child { border-radius: var(--radius-md) 0 0 var(--radius-md); }
+        td:last-child { border-radius: 0 var(--radius-md) var(--radius-md) 0; }
+        
+        .btn-add { width: 100%; padding: 18px; border-radius: var(--radius-md); border: 2px dashed var(--border); background: var(--bg-body); color: var(--text-muted); font-weight: 800; cursor: pointer; transition: var(--transition-smooth); font-size: 1rem; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-add:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); transform: translateY(-2px); }
+        .btn-del { background: var(--danger-bg); border: none; color: var(--danger-text); border-radius: 50%; width: 32px; height: 32px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; font-size: 1.2rem; font-weight: bold; opacity: 0.7; }
+        .btn-del:hover { opacity: 1; transform: scale(1.1) rotate(90deg); background: var(--danger); color: white; }
 
         /* CHECK BUTTON (PAGO) */
-        .btn-check { 
-            width: 24px; height: 24px; border-radius: 50%; border: 2px solid #cbd5e1; 
-            background: #fff; color: white; cursor: pointer; display: flex; 
-            align-items: center; justify-content: center; font-size: 0.8rem; transition: 0.2s;
-        }
-        .btn-check.checked { background: #10b981; border-color: #10b981; }
-        
-        /* ESTILO DE LINHA PAGA */
-        tr.row-paid input { text-decoration: line-through; color: #94a3b8; }
+        .btn-check { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--border); background: var(--bg-card); color: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1rem; transition: 0.2s; box-shadow: var(--shadow-sm); }
+        .btn-check.checked { background: var(--success); border-color: var(--success); color: white; }
+        tr.row-paid input { text-decoration: line-through; color: var(--text-muted); opacity: 0.7; }
         tr.row-paid select { opacity: 0.5; }
 
-        .style-income { border-left: 5px solid var(--success-dark); } .style-income h2 { color: var(--success-dark); }
-        .style-inter { border-left: 5px solid var(--inter); } .style-inter h2 { color: var(--inter); }
-        .style-igor { border-left: 5px solid var(--igor); } .style-igor h2 { color: var(--igor); }
-        .style-lucas { border-left: 5px solid var(--lucas); } .style-lucas h2 { color: var(--lucas); }
+        .prog-bar { height: 6px; background: var(--border-light); border-radius: 4px; margin-top: 8px; overflow: hidden; }
+        .prog-fill { height: 100%; background: var(--primary-gradient); width: 0%; transition: width 0.5s; border-radius: 4px;}
 
-        .bill-input { width: 100px; text-align: right; font-weight: bold; padding: 5px; border-radius: 5px; border: 1px solid #fecdd3; color: var(--primary-dark); }
+        /* CARTÕES (Cards de Fatura) */
+        .card-row { display: flex; align-items: center; padding: 25px 30px; border-bottom: 1px solid var(--border-light); gap: 25px; background: rgba(0,0,0,0.01); flex-wrap: wrap; }
+        .card-thumb { width: 130px; height: 80px; border-radius: 16px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 900; font-size: 1.5rem; flex-shrink: 0; box-shadow: 0 8px 15px rgba(0,0,0,0.15); transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        .section:hover .card-thumb { transform: scale(1.05) rotate(2deg); }
+        .card-info { flex: 1; min-width: 200px; }
+        .card-info h2 { margin: 0 0 8px 0; font-size: 1.3rem; font-weight: 900; letter-spacing: -0.5px; }
+        .card-info .bill-wrapper { display: flex; align-items: center; gap: 10px; font-size: 1rem; color: var(--text-muted); font-weight: 700; flex-wrap: wrap; }
+        .card-info input { width: 140px; font-size: 1.2rem; font-weight: 900; padding: 10px; border-radius: var(--radius-md); border: 2px solid transparent; background: var(--bg-body); color: var(--text-main); }
+        .card-info input:focus { border-color: var(--primary); background: var(--bg-card); box-shadow: 0 4px 15px var(--primary-light); }
+        .my-share-text { margin-top: 8px; font-size: 0.95rem; color: var(--primary); font-weight: 800; background: var(--primary-light); display: inline-block; padding: 4px 10px; border-radius: 8px; }
+
+        .thumb-igor { background: linear-gradient(135deg, #60a5fa, #2563eb); }
+        .thumb-lucas { background: linear-gradient(135deg, #34d399, #059669); }
+        .thumb-inter { background: linear-gradient(135deg, #fb923c, #ea580c); }
 
         /* DEVEDORES */
-        .debt-summary { display: flex; gap: 15px; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #f1f5f9; }
-        .ds-box { flex: 1; text-align: center; }
-        .ds-lbl { font-size: 0.7rem; text-transform: uppercase; color: #64748b; font-weight: 600; }
-        .ds-val { font-size: 1.1rem; font-weight: 800; }
-        .debt-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; }
-        .debt-item { background: #fff; border: 1px solid var(--border); padding: 15px; border-radius: 12px; position: relative; }
-        .debt-item.is-paid { background: #dcfce7; border-color: #86efac; opacity: 0.8; }
+        .debt-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
+        .debt-card { background: var(--bg-body); border-radius: var(--radius-xl); padding: 25px; display: flex; flex-direction: column; gap: 15px; border: 1px solid var(--border-light); transition: var(--transition-smooth); }
+        .debt-card:hover { background: var(--bg-card); box-shadow: var(--shadow); transform: translateY(-5px); }
+        .debt-card.is-paid { background: var(--success-bg); border-color: transparent; opacity: 0.9; }
         .d-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
-        .d-name { font-weight: 700; color: var(--primary-dark); font-size: 1rem; text-transform: capitalize; }
-        .d-val { font-size: 1.3rem; font-weight: 800; color: var(--text-main); margin: 5px 0; }
-        .debt-item.is-paid .d-val { color: #15803d; text-decoration: line-through; }
-        .d-status { font-size: 0.75rem; font-weight: 600; color: #b45309; background: #fffbeb; padding: 2px 8px; border-radius: 10px; }
-        .debt-item.is-paid .d-status { color: #15803d; background: #fff; }
-        .pay-check { width: 24px; height: 24px; border-radius: 50%; border: 2px solid #cbd5e1; display: flex; align-items: center; justify-content: center; cursor: pointer; background: #fff; }
-        .pay-check.checked { background: #22c55e; border-color: #22c55e; color: #fff; }
+        .d-name { font-weight: 900; color: var(--text-main); font-size: 1.3rem; text-transform: capitalize; }
+        .d-val { font-size: 1.8rem; font-weight: 900; color: var(--text-main); margin: 5px 0; letter-spacing: -1px; }
+        .debt-card.is-paid .d-val { color: var(--success-text); text-decoration: line-through; }
+        .d-status { font-size: 0.8rem; font-weight: 800; color: #b45309; background: var(--warning-bg); padding: 6px 12px; border-radius: 12px; display: inline-block; }
+        .debt-card.is-paid .d-status { color: var(--success-text); background: var(--bg-card); }
+        
+        .pay-check { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; background: var(--bg-card); font-weight: bold; transition: 0.2s; box-shadow: var(--shadow-sm); }
+        .pay-check.checked { background: var(--success); border-color: var(--success); color: #fff; }
 
-        footer { text-align: center; font-size: 0.8rem; color: var(--text-muted); margin-top: 40px; }
+        /* TELAS */
+        #lockScreen { position: fixed; inset: 0; background: var(--bg-body); z-index: 9999; display: flex; align-items: center; justify-content: center; }
+        .lock-box { background: var(--bg-card); padding: 50px 40px; border-radius: var(--radius-xl); text-align: center; border: 1px solid var(--border-light); box-shadow: var(--shadow); width: 320px; animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+        .lock-input { padding: 18px; font-size: 2.5rem; text-align: center; margin: 30px 0; border-radius: var(--radius-lg); border: 2px solid transparent; background: var(--bg-body); color: var(--primary); width: 100%; box-sizing: border-box; transition: var(--transition-smooth); font-family: 'Inter', sans-serif; letter-spacing: 10px; font-weight: 900; }
+        .lock-input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 4px var(--primary-light); transform: translateY(-3px); }
+
+        .view-section { display: none; opacity: 0; transform: translateY(20px); }
+        .view-section.active { display: block; animation: viewFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes viewFadeIn { to { opacity: 1; transform: translateY(0); } }
+
+        /* SWEETALERT PERSONALIZADO */
+        .meu-popup-sweet { background: var(--bg-card) !important; border-radius: var(--radius-xl) !important; padding: 30px !important; box-shadow: var(--shadow-hover) !important; border: 1px solid var(--border-light) !important; }
+        .swal2-title { color: var(--text-main) !important; font-family: 'Inter', sans-serif !important; font-weight: 900 !important; }
+        .swal2-html-container { color: var(--text-muted) !important; font-family: 'Inter', sans-serif !important; }
+        .meu-botao-sweet-confirm { background: var(--primary-gradient) !important; color: white !important; padding: 14px 30px !important; border-radius: 50px !important; font-weight: 800 !important; border: none !important; margin: 0 10px !important; font-size: 1rem !important; box-shadow: 0 8px 20px rgba(219, 39, 119, 0.3) !important; transition: 0.2s !important; }
+        .meu-botao-sweet-confirm:hover { transform: translateY(-2px) !important; box-shadow: 0 10px 25px rgba(219, 39, 119, 0.4) !important; }
+        .meu-botao-sweet-cancel { background: transparent !important; color: var(--text-main) !important; padding: 14px 30px !important; border-radius: 50px !important; font-weight: 800 !important; border: 2px solid var(--border) !important; margin: 0 10px !important; font-size: 1rem !important; transition: 0.2s !important; }
+        .meu-botao-sweet-cancel:hover { background: var(--bg-body) !important; border-color: var(--text-main) !important; }
+
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
     </style>
 </head>
 <body>
 
+<div id="saveToast"><span class="material-icons-round">check_circle</span> Salvo!</div>
+
 <div id="loadingOverlay">
     <div class="spinner"></div>
-    <div style="font-weight:600; color:#db2777">Processando...</div>
+    <div style="font-weight:800; color:var(--primary); font-size: 1.1rem;">Sincronizando...</div>
 </div>
 
 <div id="lockScreen">
     <div class="lock-box">
-        <div style="font-size:3rem; margin-bottom:10px;">💖</div>
-        <h2>Olá, Dani!</h2>
-        <p style="color:#64748b; font-size:0.9rem;">Digite sua senha</p>
-        <input type="password" id="passInput" class="lock-input" placeholder="****" inputmode="numeric">
-        <div id="passError" class="error-msg"></div>
-        <button class="btn-unlock" onclick="checkPassword()">ENTRAR</button>
+        <div style="font-size: 3.5rem; margin-bottom: 10px;">💖</div>
+        <h2 style="margin:0; font-weight: 900; color: var(--text-main);">Olá, Dani!</h2>
+        <p style="color:var(--text-muted); font-size: 0.9rem;">Insira sua senha de acesso</p>
+        <input type="password" id="passInput" class="lock-input" placeholder="••••" inputmode="numeric" maxlength="4">
+        <div id="passError" style="color:var(--danger); font-weight:bold; height:20px; font-size: 0.9rem; margin-bottom: 15px;"></div>
+        <button class="btn-action btn-save" style="width:100%; justify-content:center; padding:16px; font-size:1.1rem;" onclick="checkPassword()">Desbloquear</button>
     </div>
 </div>
 
-<div id="appContent">
-    <header>
-        <div class="controls-row">
-            <div class="date-control">
-                <span>📅</span>
-                <input type="month" id="monthPicker" onchange="changeMonthSafe()">
+<nav id="sidebar">
+    <div class="brand"><span class="material-icons-round">favorite</span> Finanças Dani</div>
+    
+    <button class="nav-btn active" onclick="switchView('dashboard')"><span class="material-icons-round">dashboard</span> Resumo</button>
+    <button class="nav-btn" onclick="switchView('income')"><span class="material-icons-round">sync_alt</span> Fixos</button>
+    <button class="nav-btn" onclick="switchView('cards')"><span class="material-icons-round">credit_card</span> Cartões</button>
+    <button class="nav-btn" onclick="switchView('debts')"><span class="material-icons-round">group</span> Devedores</button>
+    
+    <div class="menu-divider"></div>
+
+    <button class="nav-btn btn-config" onclick="toggleTheme()">
+        <span class="material-icons-round">dark_mode</span> Tema
+    </button>
+    <button class="nav-btn btn-lock" onclick="lockApp()" style="color: var(--danger);">
+        <span class="material-icons-round">lock</span> Bloquear
+    </button>
+</nav>
+
+<main id="main-content">
+    
+    <div class="mobile-header" id="mobileHeader">
+        <h1>Finanças Dani</h1>
+        <div class="mobile-header-actions">
+            <button class="mobile-btn" onclick="toggleTheme()"><span class="material-icons-round">dark_mode</span></button>
+            <button class="mobile-btn" onclick="lockApp()" style="color: var(--danger);"><span class="material-icons-round">lock</span></button>
+        </div>
+    </div>
+
+    <div class="controls-row">
+        <div class="date-control">
+            <span class="material-icons-round" style="background: var(--bg-body); padding: 8px; border-radius: 10px;">calendar_month</span>
+            <input type="month" id="monthPicker" onchange="changeMonthSafe()">
+        </div>
+        <div class="actions-group">
+            <button class="btn-action btn-outline" onclick="resetMonthDefault()"><span class="material-icons-round">delete_outline</span> Limpar</button>
+            <button class="btn-action btn-outline" onclick="copyPreviousMonth()"><span class="material-icons-round">content_copy</span> Importar</button>
+            <button class="btn-action btn-export" onclick="exportToCSV()"><span class="material-icons-round">table_view</span> Excel</button>
+            <button class="btn-action btn-save" onclick="scheduleSave(true)"><span class="material-icons-round">done_all</span> Salvar</button>
+        </div>
+        <div id="syncStatus" style="font-size:0.8rem; font-weight:bold; color:var(--text-muted); display:flex; align-items:center; gap:5px; transition: 0.3s; width: 100%; text-align: center; justify-content: center; display: none;">...</div>
+    </div>
+
+    <div id="view-dashboard" class="view-section active">
+        <div class="dashboard-grid">
+            <div class="card-stat c-salary">
+                <h3><span class="material-icons-round" style="font-size: 1.2rem;">account_balance</span> Salário Base</h3>
+                <input type="number" id="salary" class="stat-input" value="0" oninput="calculateAndSchedule()" onfocus="window.isEditing=true" onblur="window.isEditing=false">
+                <div class="salary-bar-bg"><div class="salary-bar-fill" id="salaryBar"></div></div>
             </div>
-            <button class="btn-action btn-copy" onclick="copyPreviousMonth()">
-                <span>🔄</span> Copiar Mês
-            </button>
-            <button class="btn-action btn-export" onclick="exportToCSV()">
-                <span>📥</span> Excel
-            </button>
-            <button class="btn-logout-simple" onclick="lockApp()">Bloquear</button>
-        </div>
-        <div id="syncStatus" class="sync-indicator">Conectando...</div>
-    </header>
-
-    <div class="dashboard-grid">
-        <div class="card-stat c-salary">
-            <h3>Salário Base</h3>
-            <input type="number" id="salary" class="stat-input" value="0" oninput="calculateAndSchedule()" onfocus="window.isEditing=true" onblur="window.isEditing=false">
-            <div class="salary-bar-bg" title="Comprometimento da Renda"><div class="salary-bar-fill" id="salaryBar"></div></div>
-        </div>
-        <div class="card-stat c-income"><h3>Renda Extra</h3><div class="val" id="extraIncomeTotal">R$ 0,00</div></div>
-        <div class="card-stat c-emerg"><h3>🚨 Reserva</h3><input type="number" id="emergencyFund" class="stat-input" value="0" oninput="calculateAndSchedule()" onfocus="window.isEditing=true" onblur="window.isEditing=false"></div>
-        <div class="card-stat c-total"><h3>Total Saídas</h3><div class="val" id="totalExpenses">R$ 0,00</div></div>
-        <div class="card-stat c-rest"><h3>Livre (Total)</h3><div class="val" id="remaining">R$ 0,00</div></div>
-        <div class="card-stat c-mine"><h3>Meu Custo Real</h3><div class="val" id="myRealExpenses">R$ 0,00</div></div>
-    </div>
-
-    <div class="chart-container"><canvas id="expenseChart"></canvas></div>
-
-    <div class="section style-income">
-        <div class="sec-header"><h2>💰 Entradas Extras</h2></div>
-        <div class="sec-body">
-            <div class="table-wrap">
-                <table id="incomeTable">
-                    <thead><tr><th>Descrição</th><th style="width:120px">Valor (R$)</th><th style="width:30px"></th></tr></thead>
-                    <tbody></tbody>
-                </table>
+            <div class="card-stat c-income">
+                <h3><span class="material-icons-round" style="font-size: 1.2rem;">add_circle</span> Renda Extra</h3>
+                <div class="val" id="extraIncomeTotal">R$ 0,00</div>
             </div>
-            <button class="btn-add" style="border-color:var(--success-dark); color:var(--success-dark); background:#f0fdf4;" onclick="addIncomeRow()">+ Adicionar Renda Extra</button>
-        </div>
-    </div>
-
-    <div class="section">
-        <div class="sec-header"><h2>📉 Gastos Fixos</h2></div>
-        <div class="sec-body">
-            <div class="table-wrap">
-                <table id="mainTable">
-                    <thead><tr><th style="width:40px">Ícone</th><th>Item</th><th>Desc.</th><th style="width:60px; text-align:center">Parc.</th><th style="width:100px">Valor</th><th style="width:40px; text-align:center">Pago?</th><th style="width:40px; text-align:center">Meu?</th><th style="width:30px"></th></tr></thead>
-                    <tbody></tbody>
-                </table>
+            <div class="card-stat c-emerg">
+                <h3><span class="material-icons-round" style="font-size: 1.2rem;">savings</span> Reserva</h3>
+                <input type="number" id="emergencyFund" class="stat-input" value="0" oninput="calculateAndSchedule()" onfocus="window.isEditing=true" onblur="window.isEditing=false">
             </div>
-            <button class="btn-add" onclick="addMainRow()">+ Adicionar Gasto Fixo</button>
-        </div>
-    </div>
-
-    <div class="section style-igor">
-        <div class="sec-header"><h2>💳 Cartão do Igor</h2><div><small>Total a Pagar:</small> <strong id="igorTotalDisplay" style="font-size:1.2rem;">R$ 0,00</strong></div></div>
-        <div class="sec-body">
-            <div class="table-wrap"><table id="igorTable"><thead><tr><th>Descrição</th><th>Detalhe</th><th>Parc.</th><th>Valor</th><th></th></tr></thead><tbody></tbody></table></div>
-            <button class="btn-add" onclick="addSplitRow('igorTable')">+ Adicionar Item no Igor</button>
-        </div>
-    </div>
-
-    <div class="section style-lucas">
-        <div class="sec-header"><h2>💳 Cartão do Lucas</h2><div><small>Total a Pagar:</small> <strong id="lucasTotalDisplay" style="font-size:1.2rem;">R$ 0,00</strong></div></div>
-        <div class="sec-body">
-            <div class="table-wrap"><table id="lucasTable"><thead><tr><th>Descrição</th><th>Detalhe</th><th>Parc.</th><th>Valor</th><th></th></tr></thead><tbody></tbody></table></div>
-            <button class="btn-add" onclick="addSplitRow('lucasTable')">+ Adicionar Item no Lucas</button>
-        </div>
-    </div>
-
-    <div class="section style-inter">
-        <div class="sec-header"><h2>💳 Meu Cartão Inter</h2><div><small>FATURA:</small><input type="number" id="interTotalBill" class="bill-input" oninput="calculateAndSchedule()" onfocus="window.isEditing=true" onblur="window.isEditing=false"></div></div>
-        <div class="sec-body">
-            <div class="table-wrap"><table id="interTable"><thead><tr><th>Quem</th><th>Desc.</th><th>Parc.</th><th>Valor</th><th></th></tr></thead><tbody></tbody></table></div>
-            <button class="btn-add" onclick="addSplitRow('interTable')">+ Adicionar no Inter</button>
-            <div style="text-align:right; margin-top:10px; color:var(--inter)">Minha parte: <strong id="interMyShareDisplay">R$ 0,00</strong></div>
-        </div>
-    </div>
-
-    <div class="section" style="border-left: 5px solid #ef4444;">
-        <div class="sec-header"><h2 style="color:#b91c1c">💸 Dívidas (A Pagar)</h2></div>
-        <div class="sec-body">
-            <div class="debt-summary">
-                <div class="ds-box"><div class="ds-lbl">Falta Pagar</div><div class="ds-val" id="totalToReceive" style="color:#ef4444">R$ 0,00</div></div>
-                <div class="ds-box" style="border-left:1px solid #e2e8f0"><div class="ds-lbl">Já Pago</div><div class="ds-val" id="totalReceived" style="color:#22c55e">R$ 0,00</div></div>
+            <div class="card-stat c-total">
+                <h3><span class="material-icons-round" style="font-size: 1.2rem;">arrow_circle_down</span> Total Saídas</h3>
+                <div class="val" id="totalExpenses">R$ 0,00</div>
             </div>
-            <div id="debtorsList" class="debt-list"></div>
+            <div class="card-stat c-rest">
+                <h3 style="color: rgba(255,255,255,0.9);"><span class="material-icons-round" style="font-size: 1.2rem;">wallet</span> Livre (Total)</h3>
+                <div class="val" id="remaining">R$ 0,00</div>
+            </div>
+            <div class="card-stat c-mine">
+                <h3><span class="material-icons-round" style="font-size: 1.2rem;">person</span> Meu Custo Real</h3>
+                <div class="val" id="myRealExpenses">R$ 0,00</div>
+            </div>
+        </div>
+        <div class="section">
+            <div class="sec-header"><h2><span class="material-icons-round" style="color:var(--primary)">pie_chart</span> Distribuição</h2></div>
+            <div class="sec-body" style="height:350px; display:flex; justify-content:center;"><canvas id="expenseChart"></canvas></div>
         </div>
     </div>
 
-    <button class="btn-reset" onclick="resetMonthDefault()">⚠️ RESETAR ESTE MÊS (Correção)</button>
-    <footer>Versão 18.0 - Dani 💖</footer>
-</div>
+    <div id="view-income" class="view-section">
+        <div class="section" style="border-left: 5px solid var(--success);">
+            <div class="sec-header"><h2 style="color:var(--success)"><span class="material-icons-round">payments</span> Entradas Extras</h2></div>
+            <div class="sec-body" style="background: var(--bg-body);">
+                <div class="table-wrap"><table id="incomeTable"><thead><tr><th>Descrição</th><th style="width:150px">Valor (R$)</th><th style="width:50px"></th></tr></thead><tbody></tbody></table></div>
+                <button class="btn-add" onclick="addIncomeRow()"><span class="material-icons-round">add</span> Adicionar Renda Extra</button>
+            </div>
+        </div>
+        <div class="section">
+            <div class="sec-header"><h2><span class="material-icons-round" style="color:var(--danger)">trending_down</span> Gastos Fixos</h2></div>
+            <div class="sec-body" style="background: var(--bg-body);">
+                <div class="table-wrap"><table id="mainTable"><thead><tr><th style="width:60px">Ícone</th><th>Item</th><th>Desc.</th><th style="width:80px; text-align:center;">Parc.</th><th style="width:130px">Valor (R$)</th><th style="width:60px; text-align:center;">Pago?</th><th style="width:60px; text-align:center;">É Meu?</th><th style="width:50px"></th></tr></thead><tbody></tbody></table></div>
+                <button class="btn-add" onclick="addMainRow()"><span class="material-icons-round">add</span> Adicionar Gasto Fixo</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="view-cards" class="view-section">
+        <div class="section" style="border-left: 5px solid var(--igor);">
+            <div class="card-row">
+                <div class="card-thumb thumb-igor">IGOR</div>
+                <div class="card-info">
+                    <h2 style="color: var(--igor)">Cartão do Igor</h2>
+                    <div class="bill-wrapper">Fatura (Soma): <strong id="igorTotalDisplay" style="font-size:1.3rem; color: var(--igor)">R$ 0,00</strong></div>
+                </div>
+            </div>
+            <div class="sec-body" style="background: var(--bg-body);">
+                <div class="table-wrap"><table id="igorTable"><thead><tr><th>Descrição</th><th>Detalhe</th><th>Parc.</th><th>Valor (R$)</th><th></th></tr></thead><tbody></tbody></table></div>
+                <button class="btn-add" onclick="addSplitRow('igorTable')"><span class="material-icons-round">add</span> Item Cartão Igor</button>
+            </div>
+        </div>
+
+        <div class="section" style="border-left: 5px solid var(--lucas);">
+            <div class="card-row">
+                <div class="card-thumb thumb-lucas">LUCAS</div>
+                <div class="card-info">
+                    <h2 style="color: var(--lucas)">Cartão do Lucas</h2>
+                    <div class="bill-wrapper">Fatura (Soma): <strong id="lucasTotalDisplay" style="font-size:1.3rem; color: var(--lucas)">R$ 0,00</strong></div>
+                </div>
+            </div>
+            <div class="sec-body" style="background: var(--bg-body);">
+                <div class="table-wrap"><table id="lucasTable"><thead><tr><th>Descrição</th><th>Detalhe</th><th>Parc.</th><th>Valor (R$)</th><th></th></tr></thead><tbody></tbody></table></div>
+                <button class="btn-add" onclick="addSplitRow('lucasTable')"><span class="material-icons-round">add</span> Item Cartão Lucas</button>
+            </div>
+        </div>
+
+        <div class="section" style="border-left: 5px solid var(--inter);">
+            <div class="card-row">
+                <div class="card-thumb thumb-inter">INTER</div>
+                <div class="card-info">
+                    <h2 style="color: var(--inter)">Meu Cartão Inter</h2>
+                    <div class="bill-wrapper">Fatura Real: R$ <input type="number" id="interTotalBill" oninput="calculateAndSchedule()" onfocus="window.isEditing=true" onblur="window.isEditing=false"></div>
+                    <div class="my-share-text" id="interMyShareDisplay" style="background: rgba(255, 122, 0, 0.1); color: var(--inter);">Minha Parte: R$ 0,00</div>
+                </div>
+            </div>
+            <div class="sec-body" style="background: var(--bg-body);">
+                <div class="table-wrap"><table id="interTable"><thead><tr><th>Quem</th><th>Detalhe</th><th>Parc.</th><th>Valor (R$)</th><th></th></tr></thead><tbody></tbody></table></div>
+                <button class="btn-add" onclick="addSplitRow('interTable')"><span class="material-icons-round">add</span> Item Fatura Inter</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="view-debts" class="view-section">
+        <div class="section">
+            <div class="sec-header"><h2><span class="material-icons-round" style="color:var(--danger)">money_off</span> Controle de Devedores</h2></div>
+            <div class="sec-body" style="background: var(--bg-body);">
+                <div class="debt-summary" style="display:flex; justify-content:space-around; margin-bottom:30px; padding: 25px; background: var(--bg-card); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); border: 1px solid var(--border-light); align-items: center;">
+                    <div style="text-align:center; flex: 1; min-width: 120px;">
+                        <small style="color:var(--danger); font-weight:800; letter-spacing: 1px;">FALTA PAGAR</small>
+                        <div style="font-size: clamp(1.4rem, 4vw, 2rem); font-weight:900; color:var(--danger); letter-spacing: -1px; word-break: break-word;" id="totalToReceive">R$ 0,00</div>
+                    </div>
+                    <div style="width: 1px; background: var(--border-light); min-height: 40px; margin: 0 15px;"></div>
+                    <div style="text-align:center; flex: 1; min-width: 120px;">
+                        <small style="color:var(--success); font-weight:800; letter-spacing: 1px;">JÁ PAGO</small>
+                        <div style="font-size: clamp(1.4rem, 4vw, 2rem); font-weight:900; color:var(--success); letter-spacing: -1px; word-break: break-word;" id="totalReceived">R$ 0,00</div>
+                    </div>
+                </div>
+                <div id="debtorsList" class="debt-list"></div>
+            </div>
+        </div>
+    </div>
+
+</main>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
@@ -313,21 +436,6 @@
     const SENHA_DO_SISTEMA = "0805"; 
 
     window.isEditing = false; 
-
-    window.checkPassword = function() {
-        const input = document.getElementById('passInput').value;
-        if (input === SENHA_DO_SISTEMA) {
-            document.getElementById('lockScreen').style.display = 'none';
-            document.getElementById('appContent').style.display = 'block';
-            initApp();
-        } else {
-            document.getElementById('passError').innerText = "Senha incorreta!";
-            document.getElementById('passInput').value = "";
-        }
-    }
-    document.getElementById('passInput').addEventListener("keypress", (e) => { if(e.key==="Enter") window.checkPassword() });
-    window.lockApp = () => location.reload();
-
     let currentDocId = "";
     let isReceiving = false;
     let saveTimer;
@@ -337,11 +445,57 @@
     window.paidDebtors = [];
     window.iconsList = ["💸", "🏠", "📶", "🏰", "🎧", "🥊", "💅", "✍️", "🚗", "🛒", "💄", "🏥", "🏋️", "👱", "🧔"];
 
+    window.onload = () => {
+        if(localStorage.getItem('theme') === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+        
+        if(window.innerWidth <= 768) {
+            document.getElementById('main-content').addEventListener('scroll', () => {
+                if(window.isEditing) document.activeElement.blur(); 
+            });
+        }
+    };
+
+    window.switchView = (viewName) => {
+        document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+        document.getElementById('view-'+viewName).classList.add('active');
+        document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+        event.currentTarget.classList.add('active');
+        document.getElementById('main-content').scrollTo(0,0); 
+    };
+
+    window.toggleTheme = () => {
+        const html = document.documentElement;
+        const newTheme = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        if (chartInstance) chartInstance.update(); 
+    };
+
+    window.checkPassword = function() {
+        const input = document.getElementById('passInput').value;
+        if (input === SENHA_DO_SISTEMA) {
+            document.getElementById('lockScreen').style.opacity = '0';
+            setTimeout(() => document.getElementById('lockScreen').style.display = 'none', 300);
+            initApp();
+        } else {
+            document.getElementById('passError').innerText = "Senha incorreta!";
+            document.getElementById('passInput').value = "";
+        }
+    }
+    document.getElementById('passInput').addEventListener("keypress", (e) => { if(e.key==="Enter") window.checkPassword() });
+    window.lockApp = () => location.reload();
+
     function initApp() {
         const now = new Date();
         const defaultDate = localStorage.getItem('last_month_viewed') || `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
         document.getElementById('monthPicker').value = defaultDate;
         loadMonthData(defaultDate);
+    }
+
+    function showToast() {
+        const toast = document.getElementById('saveToast');
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2000);
     }
 
     window.exportToCSV = function() {
@@ -358,7 +512,8 @@
             const inputs = tr.querySelectorAll('input');
             const checkBtn = tr.querySelector('.btn-check');
             const paid = (checkBtn && checkBtn.classList.contains('checked')) ? "SIM" : "NAO";
-            rows.push(["Gasto Fixo", inputs[0].value, inputs[1].value, inputs[2].value, inputs[3].value, paid, inputs[4].checked ? "SIM" : "NAO"]);
+            const isMine = tr.querySelector('input[type="checkbox"]').checked ? "SIM" : "NAO";
+            rows.push(["Gasto Fixo", inputs[0].value, inputs[1].value, inputs[2].value, inputs[3].value, paid, isMine]);
         });
 
         const scrape = (tid, cat) => {
@@ -403,41 +558,63 @@
     }
 
     window.resetMonthDefault = async function() {
-        if(!confirm("Tem certeza? Isso vai limpar todos os dados deste mês agora.")) return;
-        clearTimeout(saveTimer);
-        isReceiving = true; 
-        const defaultData = getDefaultData();
-        updateScreen(defaultData);
-        try { await setDoc(doc(db, "gastos_namorada", currentDocId), defaultData); alert("Mês resetado!"); } 
-        catch(e) { console.error(e); }
-        isReceiving = false;
+        const result = await Swal.fire({
+            title: 'Limpar mês?', text: "Você vai apagar TODOS os dados deste mês agora.", icon: 'warning',
+            showCancelButton: true, confirmButtonText: 'Sim, limpar!', cancelButtonText: 'Cancelar',
+            customClass: { popup: 'meu-popup-sweet', confirmButton: 'meu-botao-sweet-confirm', cancelButton: 'meu-botao-sweet-cancel' }, buttonsStyling: false
+        });
+
+        if (result.isConfirmed) {
+            clearTimeout(saveTimer);
+            isReceiving = true; 
+            const defaultData = getDefaultData();
+            updateScreen(defaultData);
+            try { 
+                await setDoc(doc(db, "gastos_namorada", currentDocId), defaultData); 
+                Swal.fire({ title: 'Limpo!', icon: 'success', timer: 1500, showConfirmButton: false, customClass: { popup: 'meu-popup-sweet' } });
+            } catch(e) { console.error(e); }
+            isReceiving = false;
+        }
     }
 
     window.copyPreviousMonth = async function() {
-        if(!confirm("Importar dados do mês anterior?")) return;
-        const parts = currentDocId.split('-');
-        let year = parseInt(parts[0]);
-        let month = parseInt(parts[1]);
-        month--; if (month === 0) { month = 12; year--; }
-        const prevId = `${year}-${String(month).padStart(2, '0')}`;
+        const result = await Swal.fire({
+            title: 'Importar Mês Anterior?', text: "Puxar parcelas e devedores do mês passado.", icon: 'question',
+            showCancelButton: true, confirmButtonText: 'Sim, importar', cancelButtonText: 'Cancelar',
+            customClass: { popup: 'meu-popup-sweet', confirmButton: 'meu-botao-sweet-confirm', cancelButton: 'meu-botao-sweet-cancel' }, buttonsStyling: false
+        });
 
-        try {
-            const docSnap = await getDoc(doc(db, "gastos_namorada", prevId));
-            if (docSnap.exists()) {
-                const data = docSnap.data();
-                data.paidDebtors = [];
-                if(data.main) data.main.forEach(i => i.paid = false);
-                const inc = (arr) => arr.forEach(i => { if(i.inst && i.inst.includes('/')){ let [c,t]=i.inst.split('/'); if(c<t) i.inst=`${parseInt(c)+1}/${t}`; } });
-                if(data.main) inc(data.main); if(data.inter) inc(data.inter); if(data.igor) inc(data.igor); if(data.lucas) inc(data.lucas);
-                updateScreen(data);
-                setTimeout(() => saveDataSync(currentDocId), 500);
-            } else { alert("Mês anterior vazio."); }
-        } catch(e) { alert("Erro ao importar."); }
+        if (result.isConfirmed) {
+            const parts = currentDocId.split('-');
+            let year = parseInt(parts[0]);
+            let month = parseInt(parts[1]);
+            month--; if (month === 0) { month = 12; year--; }
+            const prevId = `${year}-${String(month).padStart(2, '0')}`;
+
+            document.getElementById('loadingOverlay').style.display = 'flex';
+            try {
+                const docSnap = await getDoc(doc(db, "gastos_namorada", prevId));
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    data.paidDebtors = [];
+                    if(data.main) data.main.forEach(i => i.paid = false);
+                    const inc = (arr) => arr.forEach(i => { if(i.inst && i.inst.includes('/')){ let [c,t]=i.inst.split('/'); if(c<t) i.inst=`${parseInt(c)+1}/${t}`; } });
+                    if(data.main) inc(data.main); if(data.inter) inc(data.inter); if(data.igor) inc(data.igor); if(data.lucas) inc(data.lucas);
+                    updateScreen(data);
+                    setTimeout(() => { saveDataSync(currentDocId); document.getElementById('loadingOverlay').style.display = 'none'; }, 500);
+                } else { 
+                    document.getElementById('loadingOverlay').style.display = 'none';
+                    Swal.fire({ title: 'Ops', text: 'Mês anterior vazio.', icon: 'info', customClass: { popup: 'meu-popup-sweet' } }); 
+                }
+            } catch(e) { 
+                document.getElementById('loadingOverlay').style.display = 'none';
+                Swal.fire({ title: 'Erro', text: 'Erro ao importar.', icon: 'error', customClass: { popup: 'meu-popup-sweet' } }); 
+            }
+        }
     }
 
     function loadMonthData(dateString) {
         currentDocId = dateString;
-        document.getElementById('syncStatus').innerText = "Carregando...";
 
         const docRef = doc(db, "gastos_namorada", currentDocId);
 
@@ -446,17 +623,13 @@
             if (docSnap.exists()) {
                 if (docSnap.metadata.hasPendingWrites) return; 
 
-                if (window.isEditing) {
-                    console.log("Ignorando update externo pois o usuário está editando.");
-                    return; 
-                }
+                if (window.isEditing) return; 
 
                 isReceiving = true;
                 const data = docSnap.data();
                 window.paidDebtors = data.paidDebtors || [];
                 updateScreen(data);
                 setTimeout(() => isReceiving = false, 500);
-                document.getElementById('syncStatus').innerHTML = '<span style="color:#db2777">☁ Sincronizado</span>';
             } else {
                 window.paidDebtors = [];
                 const defaultData = getDefaultData();
@@ -468,15 +641,18 @@
 
     async function saveDataSync(targetId) {
         const data = captureScreenData();
-        try { await setDoc(doc(db, "gastos_namorada", targetId), data); } catch(e) { console.error("Erro save sync", e); }
+        try { 
+            await setDoc(doc(db, "gastos_namorada", targetId), data); 
+            if (navigator.vibrate) navigator.vibrate(50); 
+            showToast();
+        } catch(e) { console.error("Erro save sync", e); }
     }
 
     window.calculateAndSchedule = () => {
         calculateAll();
         if (isReceiving) return;
-        document.getElementById('syncStatus').innerText = "...";
         clearTimeout(saveTimer);
-        saveTimer = setTimeout(() => saveDataSync(currentDocId), 1000); 
+        saveTimer = setTimeout(() => saveDataSync(currentDocId), 800); 
     }
 
     function captureScreenData() {
@@ -489,24 +665,28 @@
             paidDebtors: window.paidDebtors, 
             main: [], inter: [], igor: [], lucas: [], extraIncome: []
         };
+        
         document.querySelectorAll('#incomeTable tbody tr').forEach(tr => {
             const inputs = tr.querySelectorAll('input');
             data.extraIncome.push({ desc: inputs[0].value, value: inputs[1].value });
         });
+        
         document.querySelectorAll('#mainTable tbody tr').forEach(tr => {
             const inputs = tr.querySelectorAll('input');
             const name = inputs[0].value;
             const checkBtn = tr.querySelector('.btn-check');
             const isPaid = checkBtn ? checkBtn.classList.contains('checked') : false;
+            const isMine = tr.querySelector('input[type="checkbox"]').checked;
             
             if (name !== 'Fatura Cartão Igor' && name !== 'Fatura Cartão Lucas') {
                 data.main.push({ 
-                    icon: tr.querySelector('.icon-select').value, 
+                    icon: tr.querySelector('.icon-select') ? tr.querySelector('.icon-select').value : '💸', 
                     name: name, desc: inputs[1].value, inst: inputs[2].value, value: inputs[3].value, paid: isPaid,
-                    isMine: inputs[4].checked, locked: inputs[3].hasAttribute('readonly'), id: inputs[3].id || null 
+                    isMine: isMine, locked: inputs[3].hasAttribute('readonly'), id: inputs[3].id || null 
                 }); 
             }
         });
+        
         const scrape = (tid, arr) => {
             document.querySelectorAll(`#${tid} tbody tr`).forEach(tr => {
                 const i = tr.querySelectorAll('input');
@@ -578,27 +758,26 @@
 
     function addMainRowHTML(tbody, item, isAuto = false) {
         const tr = document.createElement("tr");
-        if (isAuto) tr.style.backgroundColor = "#f3f4f6";
         if (item.paid && !isAuto) tr.classList.add('row-paid'); 
 
         let opts = window.iconsList.map(i => `<option value="${i}" ${i === item.icon ? 'selected' : ''}>${i}</option>`).join('');
 
-        const locked = item.locked || isAuto ? 'readonly style="background:transparent; color:#666"' : 'onfocus="window.isEditing=true" onblur="window.isEditing=false"';
-        const del = item.locked || isAuto ? '' : `<button class="btn-del" onclick="removeRow(this)">×</button>`;
+        const locked = item.locked || isAuto ? 'readonly style="background:transparent; color:var(--text-muted); opacity:0.8"' : 'onfocus="window.isEditing=true" onblur="window.isEditing=false"';
+        const del = item.locked || isAuto ? '' : `<button class="btn-del" onclick="removeRow(this)"><span class="material-icons-round">close</span></button>`;
         const check = item.isMine ? 'checked' : '';
         const checkAttr = isAuto ? 'disabled checked' : 'onchange="calculateAndSchedule()"';
         
-        const checkBtn = isAuto ? '' : `<div class="btn-check ${item.paid ? 'checked' : ''}" onclick="toggleRowPaid(this)">✔</div>`;
+        const checkBtn = isAuto ? '' : `<div class="btn-check ${item.paid ? 'checked' : ''}" onclick="toggleRowPaid(this)"><span class="material-icons-round" style="font-size:1.2rem">check</span></div>`;
 
         tr.innerHTML = `
-            <td><select class="icon-select" ${isAuto?'disabled':''} onchange="calculateAndSchedule()">${opts}</select></td>
-            <td><input type="text" class="td-input" value="${item.name}" ${locked} ${!isAuto?'oninput="calculateAndSchedule()"':''}></td>
-            <td><input type="text" class="td-input" value="${item.desc || ''}" placeholder="Detalhe" ${locked} ${!isAuto?'oninput="calculateAndSchedule()"':''}></td>
-            <td><input type="text" class="td-input" value="${item.inst || ''}" placeholder="1/10" style="text-align:center" ${locked} ${!isAuto?'oninput="calculateAndSchedule()"':''}></td>
-            <td><input type="number" class="td-input val-input" value="${item.value}" step="0.01" id="${item.id || ''}" ${locked} ${!isAuto?'oninput="calculateAndSchedule()"':''}></td>
+            <td><select class="sys-select icon-select" ${isAuto?'disabled':''} onchange="calculateAndSchedule()">${opts}</select></td>
+            <td><input type="text" class="sys-input" value="${item.name}" ${locked} ${!isAuto?'oninput="calculateAndSchedule()"':''}></td>
+            <td><input type="text" class="sys-input" value="${item.desc || ''}" placeholder="Detalhe" ${locked} ${!isAuto?'oninput="calculateAndSchedule()"':''}></td>
+            <td><input type="text" class="sys-input" value="${item.inst || ''}" placeholder="1/10" style="text-align:center" ${locked} ${!isAuto?'oninput="calculateAndSchedule()"':''}></td>
+            <td><input type="number" class="val-input" value="${item.value}" step="0.01" id="${item.id || ''}" ${locked} ${!isAuto?'oninput="calculateAndSchedule()"':''}></td>
             <td style="display:flex; justify-content:center; align-items:center;">${checkBtn}</td>
             <td style="text-align:center"><input type="checkbox" ${check} ${checkAttr}></td>
-            <td>${del}</td>
+            <td style="text-align:center">${del}</td>
         `;
         tbody.appendChild(tr);
     }
@@ -612,14 +791,24 @@
 
     function addSplitRowHTML(tbody, item) {
         const tr = document.createElement("tr");
-        tr.innerHTML = `<td><input type="text" class="td-input split-name" value="${item.name}" placeholder="Nome" oninput="calculateAndSchedule()" onfocus="window.isEditing=true" onblur="window.isEditing=false"></td><td><input type="text" class="td-input" value="${item.desc}" placeholder="Item" oninput="calculateAndSchedule()" onfocus="window.isEditing=true" onblur="window.isEditing=false"></td><td><input type="text" class="td-input split-inst" value="${item.inst || ''}" placeholder="1/10" oninput="updateBar(this); calculateAndSchedule()" onfocus="window.isEditing=true" onblur="window.isEditing=false"><div class="prog-bar"><div class="prog-fill" style="width:0%"></div></div></td><td><input type="number" class="td-input val-input split-val" value="${item.value}" step="0.01" oninput="calculateAndSchedule()" onfocus="window.isEditing=true" onblur="window.isEditing=false"></td><td><button class="btn-del" onclick="removeRow(this)">×</button></td>`;
+        tr.innerHTML = `
+            <td><input type="text" class="sys-input split-name" value="${item.name}" placeholder="Nome" oninput="calculateAndSchedule()" onfocus="window.isEditing=true" onblur="window.isEditing=false"></td>
+            <td><input type="text" class="sys-input" value="${item.desc}" placeholder="Item" oninput="calculateAndSchedule()" onfocus="window.isEditing=true" onblur="window.isEditing=false"></td>
+            <td><input type="text" class="sys-input split-inst" value="${item.inst || ''}" placeholder="1/10" oninput="updateBar(this); calculateAndSchedule()" onfocus="window.isEditing=true" onblur="window.isEditing=false"><div class="prog-bar"><div class="prog-fill" style="width:0%"></div></div></td>
+            <td><input type="number" class="val-input split-val" value="${item.value}" step="0.01" oninput="calculateAndSchedule()" onfocus="window.isEditing=true" onblur="window.isEditing=false"></td>
+            <td style="text-align:center"><button class="btn-del" onclick="removeRow(this)"><span class="material-icons-round">close</span></button></td>
+        `;
         tbody.appendChild(tr);
         if(item.inst) updateBar(tr.querySelector('.split-inst'));
     }
 
     function addIncomeRowHTML(tbody, item) {
         const tr = document.createElement("tr");
-        tr.innerHTML = `<td><input type="text" class="td-input" value="${item.desc}" placeholder="Ex: Diária" oninput="calculateAndSchedule()" onfocus="window.isEditing=true" onblur="window.isEditing=false"></td><td><input type="number" class="td-input val-input" value="${item.value}" step="0.01" oninput="calculateAndSchedule()" onfocus="window.isEditing=true" onblur="window.isEditing=false"></td><td><button class="btn-del" onclick="removeRow(this)">×</button></td>`;
+        tr.innerHTML = `
+            <td><input type="text" class="sys-input" value="${item.desc}" placeholder="Ex: Diária" oninput="calculateAndSchedule()" onfocus="window.isEditing=true" onblur="window.isEditing=false"></td>
+            <td><input type="number" class="val-input" value="${item.value}" step="0.01" oninput="calculateAndSchedule()" onfocus="window.isEditing=true" onblur="window.isEditing=false"></td>
+            <td style="text-align:center"><button class="btn-del" onclick="removeRow(this)"><span class="material-icons-round">close</span></button></td>
+        `;
         tbody.appendChild(tr);
     }
 
@@ -674,13 +863,13 @@
         const percent = totalIncome > 0 ? (totalExpenses / totalIncome) * 100 : 0;
         const bar = document.getElementById('salaryBar');
         bar.style.width = Math.min(percent, 100) + "%";
-        if(percent < 50) bar.style.backgroundColor = "#10b981"; 
-        else if(percent < 85) bar.style.backgroundColor = "#f59e0b"; 
-        else bar.style.backgroundColor = "#ef4444"; 
+        if(percent < 50) bar.style.backgroundColor = "var(--success)"; 
+        else if(percent < 85) bar.style.backgroundColor = "var(--warning)"; 
+        else bar.style.backgroundColor = "var(--danger)"; 
 
         const debts = {};
-        if (igorSum > 0) debts['igor'] = { name: 'Igor', total: igorSum };
-        if (lucasSum > 0) debts['lucas'] = { name: 'Lucas', total: lucasSum };
+        if (igorSum > 0) debts['Igor'] = { name: 'Igor', total: igorSum };
+        if (lucasSum > 0) debts['Lucas'] = { name: 'Lucas', total: lucasSum };
 
         updateDebtors(debts);
 
@@ -699,13 +888,13 @@
         });
         if (!found && value >= 0) { 
             const tr = document.createElement("tr");
-            tr.style.backgroundColor = "#f3f4f6"; 
+            tr.style.backgroundColor = "var(--bg-body)"; 
             tr.innerHTML = `
-                <td><select class="icon-select" disabled><option>${icon}</option></select></td>
-                <td><input type="text" class="td-input" value="${name}" readonly style="background:transparent; color:#666; font-weight:bold;"></td>
-                <td><input type="text" class="td-input" value="" readonly style="background:transparent;"></td>
-                <td><input type="text" class="td-input" value="" readonly style="background:transparent;"></td>
-                <td><input type="number" class="td-input val-input" value="${value.toFixed(2)}" readonly style="background:transparent; font-weight:bold; color:#0f172a;"></td>
+                <td><select class="sys-select icon-select" disabled><option>${icon}</option></select></td>
+                <td><input type="text" class="sys-input" value="${name}" readonly style="background:transparent; color:var(--text-muted); font-weight:bold;"></td>
+                <td><input type="text" class="sys-input" value="" readonly style="background:transparent;"></td>
+                <td><input type="text" class="sys-input" value="" readonly style="background:transparent;"></td>
+                <td><input type="number" class="val-input" value="${value.toFixed(2)}" readonly style="background:transparent; font-weight:bold; color:var(--text-main);"></td>
                 <td></td>
                 <td style="text-align:center"><input type="checkbox" checked disabled></td>
                 <td></td>
@@ -722,24 +911,29 @@
             if (val > 0) othersSum += val;
         });
         const myShare = totalBill - othersSum;
-        document.getElementById(displayId).innerText = myShare.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+        document.getElementById(displayId).innerText = "Minha Parte: " + myShare.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
         return { debtors, myShare };
     }
 
     function updateDebtors(all) {
         const list = document.getElementById('debtorsList'); list.innerHTML = "";
         let tr = 0; let r = 0; 
-        if (Object.keys(all).length === 0) list.innerHTML = "<div style='color:#999; width:100%; text-align:center'>Nenhuma dívida.</div>";
+        if (Object.keys(all).length === 0) list.innerHTML = "<div style='color:var(--text-muted); width:100%; text-align:center; padding: 20px; font-weight: 700;'>Nenhum devedor no momento.</div>";
         else {
             for (let k in all) {
                 const p = all[k]; 
                 const isPaid = window.paidDebtors.includes(p.name);
                 if (isPaid) r += p.total; else tr += p.total;
 
-                const div = document.createElement('div'); div.className = `debt-item ${isPaid ? 'is-paid' : ''}`;
-                const statusColor = isPaid ? '#15803d' : '#ef4444'; 
+                const div = document.createElement('div'); div.className = `debt-card ${isPaid ? 'is-paid' : ''}`;
 
-                div.innerHTML = `<div class="d-head"><div class="d-name">${p.name}</div><div class="pay-check ${isPaid ? 'checked' : ''}" onclick="togglePaid('${p.name}')">${isPaid ? '✔' : ''}</div></div><div class="d-status" style="color:${statusColor}">${isPaid ? 'PAGO' : 'FALTA PAGAR'}</div><div class="d-val">${p.total.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}</div>`;
+                div.innerHTML = `
+                <div class="d-head">
+                    <div class="d-name">${p.name}</div>
+                    <div class="pay-check ${isPaid ? 'checked' : ''}" onclick="togglePaid('${p.name}')">${isPaid ? '<span class="material-icons-round">check</span>' : ''}</div>
+                </div>
+                <div class="d-val">${p.total.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}</div>
+                <div><span class="d-status">${isPaid ? 'PAGO' : 'FALTA PAGAR'}</span></div>`;
                 list.appendChild(div);
             }
         }
@@ -748,13 +942,16 @@
     }
 
     function updateChart(fixed, cards, emerg, rest) {
+        Chart.defaults.color = localStorage.getItem('theme') === 'dark' ? '#94a3b8' : '#64748b';
+        Chart.defaults.font.family = 'Inter';
+
         const ctx = document.getElementById('expenseChart').getContext('2d');
         if (chartInstance) chartInstance.destroy();
         if (rest < 0) rest = 0;
         chartInstance = new Chart(ctx, {
             type: 'doughnut',
-            data: { labels: ['Fixos', 'Cartões', 'Reserva', 'Livre'], datasets: [{ data: [fixed, cards, emerg, rest], backgroundColor: ['#db2777', '#f59e0b', '#9333ea', '#10b981'], borderWidth: 0 }] },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+            data: { labels: ['Fixos', 'Cartões', 'Reserva', 'Livre'], datasets: [{ data: [fixed, cards, emerg, rest], backgroundColor: ['#db2777', '#f59e0b', '#9333ea', '#10b981'], borderWidth: 0, hoverOffset: 10 }] },
+            options: { responsive: true, maintainAspectRatio: false, cutout: '75%', animation: { animateScale: true }, plugins: { legend: { position: 'bottom', labels: {font: {weight: 'bold', size: 12}} } } }
         });
     }
 
